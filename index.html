@@ -38,6 +38,52 @@
       [id^="updated-"] {
         display: none !important;
     }
+
+    /* Elegant coloured rounded border used for special panels (like the Blog).
+       Uses CSS variables so each panel can override colour/halo independently. */
+    .fancy-border {
+      position: relative;
+      overflow: visible;
+      z-index: 0; /* ensure the element (and its shadow) renders above the ring */
+      /* card shadow (keeps the card visually above the ring) */
+      box-shadow: 0 14px 30px rgba(2,6,23,0.06), 0 6px 12px rgba(2,6,23,0.04);
+      /* defaults (can be overridden per-panel) */
+      --fancy-color: rgba(59,130,246,0.95); /* blue-500 */
+      --fancy-halo: rgba(59,130,246,0.06);
+      --fancy-border-radius: 8px;
+      --fancy-border-inset: 0px;
+      --fancy-border-width: 1.5px;
+    }
+
+    /* ring behind the card uses the --fancy-color variable */
+    .fancy-border::before {
+      content: '';
+      position: absolute;
+      inset: var(--fancy-border-inset);
+      border-radius: var(--fancy-border-radius);
+      border: var(--fancy-border-width) solid var(--fancy-color);
+      background: transparent;
+      z-index: -1; /* place behind the card so the card's shadow falls onto it */
+    }
+
+    /* soft halo behind the ring (uses --fancy-halo) */
+    .fancy-border::after {
+      content: '';
+      position: absolute;
+      inset: calc(var(--fancy-border-inset) - 10px);
+      border-radius: calc(var(--fancy-border-radius) + 8px);
+      background: var(--fancy-halo);
+      filter: blur(10px);
+      z-index: -2;
+    }
+
+    /* Per-panel helper classes to set different colours */
+    .fancy-blue { --fancy-color: rgba(59,130,246,0.95); --fancy-halo: rgba(59,130,246,0.06); }
+    .fancy-yellow { --fancy-color: rgba(217,119,6,0.95); --fancy-halo: rgba(217,119,6,0.06); }
+    .fancy-orange { --fancy-color: rgba(249,115,22,0.95); --fancy-halo: rgba(249,115,22,0.06); }
+    .fancy-purple { --fancy-color: rgba(124,58,237,0.95); --fancy-halo: rgba(124,58,237,0.06); }
+    .fancy-teal { --fancy-color: rgba(6,182,212,0.95); --fancy-halo: rgba(6,182,212,0.06); }
+    .fancy-black { --fancy-color: rgba(51,65,85,0.95); --fancy-halo: rgba(51,65,85,0.035); }
     </style>
 </head>
 
@@ -54,8 +100,8 @@
     <main>
       <section class="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
 
-        <!-- Panel 1: Blog -->
-        <article class="rounded-xl p-6 bg-white dark:bg-gray-800 shadow-md hover:shadow-lg transition-shadow">
+  <!-- Panel 1: Blog -->
+  <article class="rounded-xl p-6 bg-white dark:bg-gray-800 shadow-md hover:shadow-lg transition-shadow fancy-border fancy-blue">
           <div class="flex items-start justify-between">
             <div>
               <h2 class="text-lg font-semibold">Blog</h2>
@@ -70,8 +116,8 @@
           </div>
         </article>
 
-        <!-- Panel 2: Mealie -->
-        <article class="rounded-xl p-6 bg-white dark:bg-gray-800 shadow-md hover:shadow-lg transition-shadow">
+  <!-- Panel 2: Mealie -->
+  <article class="rounded-xl p-6 bg-white dark:bg-gray-800 shadow-md hover:shadow-lg transition-shadow fancy-border fancy-yellow">
           <div class="flex items-start justify-between">
             <div>
               <h2 class="text-lg font-semibold">Mealie</h2>
@@ -90,7 +136,7 @@
         <!-- Panel 3: Proxmox -->
         <!-- Make this panel two rows tall and positioned at the right-most column on sm/lg -->
         <article
-          class="rounded-xl p-6 bg-white dark:bg-gray-800 shadow-md hover:shadow-lg transition-shadow sm:col-start-2 sm:row-span-2 lg:col-start-3 lg:row-span-2">
+          class="rounded-xl p-6 bg-white dark:bg-gray-800 shadow-md hover:shadow-lg transition-shadow fancy-border fancy-orange sm:col-start-2 sm:row-span-2 lg:col-start-3 lg:row-span-2">
           <div class="flex items-start justify-between">
             <div>
               <h2 class="text-lg font-semibold">Proxmox</h2>
@@ -206,8 +252,8 @@
           </div>
         </article>
 
-        <!-- Panel 4: Web Game -->
-        <article class="rounded-xl p-6 bg-white dark:bg-gray-800 shadow-md hover:shadow-lg transition-shadow">
+  <!-- Panel 4: Web Game -->
+  <article class="rounded-xl p-6 bg-white dark:bg-gray-800 shadow-md hover:shadow-lg transition-shadow fancy-border fancy-purple">
           <div class="flex items-start justify-between">
             <div>
               <h2 class="text-lg font-semibold">Web Game</h2>
@@ -221,8 +267,8 @@
           </div>
         </article>
 
-        <!-- Panel 5: AI Server -->
-        <article class="rounded-xl p-6 bg-white dark:bg-gray-800 shadow-md hover:shadow-lg transition-shadow">
+  <!-- Panel 5: AI Server -->
+  <article class="rounded-xl p-6 bg-white dark:bg-gray-800 shadow-md hover:shadow-lg transition-shadow fancy-border fancy-black">
           <div class="flex items-start justify-between">
             <div>
               <h2 class="text-lg font-semibold">AI Server</h2>
@@ -236,8 +282,8 @@
           </div>
         </article>
 
-        <!-- Wide Panel: Quick Links -->
-        <article class="sm:col-span-2 lg:col-span-3 rounded-xl p-6 bg-white dark:bg-gray-800 shadow-md">
+  <!-- Wide Panel: Quick Links -->
+  <article class="sm:col-span-2 lg:col-span-3 rounded-xl p-6 bg-white dark:bg-gray-800 shadow-md fancy-border fancy-teal">
           <h3 class="text-lg font-semibold">Quick Links</h3>
           <div class="mt-4 flex flex-wrap gap-3">
             <a href="https://github.com/AndrewJackson-Code" class="px-3 py-2 rounded-md bg-gray-100 dark:bg-gray-700">GitHub</a>
