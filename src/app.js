@@ -8,7 +8,6 @@
     const html = document.documentElement;
     const themeToggle = document.getElementById('themeToggle');
     const aboutBtn = document.getElementById('aboutBtn');
-    // ...existing code...
     const blogDemo = document.getElementById('blogDemo');
     const startGame = document.getElementById('startGame');
     const scoreBtn = document.getElementById('scoreBtn');
