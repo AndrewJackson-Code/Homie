@@ -81,6 +81,46 @@ app.get('/api/proxmox/nodes/:node/status', async (req, res) => {
   }
 });
 
+// Simple VM online check: /api/proxmox/vm/:vmid/online?node=NODE
+app.get('/api/proxmox/vm/:vmid/online', async (req, res) => {
+  const vmid = req.params.vmid;
+  const node = req.query.node || 'pve-gamehost';
+  const url = `${PROXMOX_BASE}/api2/json/nodes/${encodeURIComponent(node)}/qemu/${encodeURIComponent(vmid)}/status/current`;
+  try {
+    const headers = {};
+    if (PROXMOX_TOKEN) headers['Authorization'] = 'PVEAPIToken=' + PROXMOX_TOKEN;
+
+    const fetchOpts = { headers };
+    if (proxmoxAgent) fetchOpts.agent = proxmoxAgent;
+
+    const proxRes = await fetch(url, fetchOpts);
+    const body = await proxRes.json().catch(() => null);
+
+    appendLog({
+      ts: new Date().toISOString(),
+      url,
+      route: '/api/proxmox/vm/:vmid/online',
+      vmid,
+      node,
+      status: proxRes.status,
+      body_snippet: body ? JSON.stringify(body).slice(0, 2000) : null
+    });
+
+    if (!body || !body.data) {
+      return res.status(proxRes.status || 502).json({ vmid, node, online: false, status: 'unknown', proxmox_status: proxRes.status, body });
+    }
+
+    // Proxmox returns a 'status' field like 'running' or 'stopped'
+    const vmStatus = body.data.status || (body.data.online ? 'running' : 'stopped');
+    const online = vmStatus === 'running' || vmStatus === 'online';
+
+    res.json({ vmid, node, online, status: vmStatus });
+  } catch (err) {
+    appendLog({ ts: new Date().toISOString(), url, route: '/api/proxmox/vm/:vmid/online', vmid, node, error: err.toString() });
+    res.status(500).json({ error: err.toString() });
+  }
+});
+
 // Optionally proxy root for raw fetch button
 app.get('/api/proxmox/root', async (req, res) => {
   const url = `${PROXMOX_BASE}/`;

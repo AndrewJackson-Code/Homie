@@ -178,26 +178,46 @@
     // Start polling automatically on page load
     window.addEventListener('DOMContentLoaded', () => {
         startPolling();
-    });
-
-    // Tiny game: click counter
-    let score = 0;
-    startGame?.addEventListener('click', () => {
-        score = 0;
-        const play = confirm('Start click demo? Click OK rapidly to increase score for 3 seconds.');
-        if (!play) return;
-        const start = Date.now();
-
-        const clickHandler = () => { score++; };
-        document.addEventListener('click', clickHandler);
-
-        setTimeout(() => {
-            document.removeEventListener('click', clickHandler);
-            alert('Time up! Your score: ' + score);
-        }, 3000);
+        // Start a lightweight VM-specific poller for Plex (vmid 108 on pve-gamehost)
+        pollVmOnline('108', 5000);
     });
 
     scoreBtn?.addEventListener('click', () => {
         alert('Current demo score: ' + score + '\n(Click Start demo to play)');
     });
+
+    // --- VM online poller ---
+    // Polls the server endpoint /api/proxmox/vm/:vmid/online and updates
+    // #status-vm-<vmid> and #updated-vm-<vmid>. Minimal and resilient.
+    function setVmStatus(vmid, online, statusText) {
+        const statusEl = document.getElementById('status-vm-' + vmid);
+        const updatedEl = document.getElementById('updated-vm-' + vmid);
+        if (!statusEl) return;
+        statusEl.textContent = online ? 'Online' : 'Offline';
+        statusEl.className = online ? 'text-green-500' : 'text-red-500';
+        if (updatedEl) updatedEl.textContent = nowShort();
+        // Optionally show status in title attribute
+        statusEl.title = statusText || '';
+    }
+
+    async function pollVmOnline(vmid, intervalMs) {
+        if (!vmid) return;
+        const url = '/api/proxmox/vm/' + encodeURIComponent(vmid) + '/online';
+        async function once() {
+            try {
+                const res = await fetch(url, { cache: 'no-store' });
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                const j = await res.json();
+                const online = !!j.online;
+                const status = j.status || (online ? 'running' : 'stopped');
+                setVmStatus(vmid, online, status);
+            } catch (err) {
+                // On error, mark offline and store error as title
+                setVmStatus(vmid, false, err.toString());
+            }
+        }
+        // Run immediately and then interval
+        once();
+        setInterval(once, intervalMs || 5000);
+    }
 })();
