@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Homie — Personal Dashboard</title>
+  <!-- Tailwind CDN (Play CDN for quick prototyping) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    // Configure Tailwind (colors + dark mode class strategy)
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            accent1: '#7c3aed',
+            accent2: '#06b6d4',
+            accent3: '#f97316'
+          }
+        }
+      }
+    }
+
+    function updateTime() {
+      const date = new Date();
+      const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+      const time = date.toLocaleTimeString();
+      const day = date.toLocaleDateString(undefined, options);
+      document.getElementById('time').innerHTML = `${day} | ${time}`;
+    }
+
+    setInterval(updateTime, 1000);
+    updateTime();
+  </script>
+</head>
+
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen">
+  <div class="max-w-6xl mx-auto p-6">
+    <header class="flex items-center justify-between mb-8">
+      <h1 class="text-2xl font-bold">Andrew Jackson</h1>
+      <div class="flex items-center gap-3">
+        <button id="themeToggle" class="px-3 py-1 bg-white/80 dark:bg-gray-800 rounded-md shadow-sm">Toggle
+          Theme</button>
+        <button id="aboutBtn" class="px-3 py-1 bg-accent2/90 text-white rounded-md shadow-sm">About</button>
+      </div>
+    </header>
+
+    <main>
+      <section class="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+
+        <!-- Panel 1: Blog -->
+        <article class="rounded-xl p-6 bg-white dark:bg-gray-800 shadow-md hover:shadow-lg transition-shadow">
+          <div class="flex items-start justify-between">
+            <div>
+              <h2 class="text-lg font-semibold">Blog</h2>
+              <p class="mt-2 text-sm text-gray-600 dark:text-gray-300">A personal blog.
+              </p>
+            </div>
+            <div class="h-12 w-12 rounded-lg bg-blue-600 flex items-center justify-center text-white font-bold">
+              B</div>
+          </div>
+          <div class="mt-4 flex gap-3">
+            <a href="#" class="px-3 py-1 bg-blue-600 text-white rounded">Take a Read</a>
+          </div>
+        </article>
+
+        <!-- Panel 2: Mealie -->
+        <article class="rounded-xl p-6 bg-white dark:bg-gray-800 shadow-md hover:shadow-lg transition-shadow">
+          <div class="flex items-start justify-between">
+            <div>
+              <h2 class="text-lg font-semibold">Mealie</h2>
+              <p class="mt-2 text-sm text-gray-600 dark:text-gray-300">A Recipie book app.</p>
+            </div>
+            <div class="h-12 w-12 rounded-lg bg-yellow-600 flex items-center justify-center text-white font-bold">
+              M</div>
+          </div>
+          <div class="mt-4 flex gap-3">
+            <a href="https://aj-mealie.duckdns.org/" id="goToMealie" class="px-3 py-1 bg-yellow-600 text-white rounded">Try
+              Now!</a>
+          </div>
+        </article>
+
+        <!-- Panel 3: Proxmox -->
+        <!-- Make this panel two rows tall and positioned at the right-most column on sm/lg -->
+        <article
+          class="rounded-xl p-6 bg-white dark:bg-gray-800 shadow-md hover:shadow-lg transition-shadow sm:col-start-2 sm:row-span-2 lg:col-start-3 lg:row-span-2">
+          <div class="flex items-start justify-between">
+            <div>
+              <h2 class="text-lg font-semibold">Proxmox</h2>
+              <p class="mt-2 text-sm text-gray-600 dark:text-gray-300">Cluster Info</p>
+            </div>
+            <div class="h-12 w-12 rounded-lg bg-orange-500 flex items-center justify-center text-white font-bold">
+              P</div>
+          </div>
+          
+            <!-- <div class="mt-4 flex items-center gap-3">
+              <button id="startPolling" class="px-3 py-1 bg-green-600 text-white rounded">Start Polling</button>
+              <button id="stopPolling" class="px-3 py-1 bg-red-600 text-white rounded hidden">Stop Polling</button>
+            </div> -->
+
+            <div id="nodesContainer" class="mt-4 grid grid-cols-1 gap-4">
+              <!-- Node cards will be injected here by src/app.js -->
+              <div id="node-pve-master" class="rounded-lg p-4 bg-gray-50 dark:bg-gray-900">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <div class="text-sm font-semibold">pve-master</div>
+                    <div class="text-xs text-gray-500 dark:text-gray-400">Status: <span class="inline-block ml-1 text-xs font-medium" id="status-pve-master">Unknown</span></div>
+                  </div>
+                  <div class="text-xs text-gray-500 dark:text-gray-400" id="updated-pve-master">—</div>
+                </div>
+                <div class="mt-3 text-xs">
+                  <div class="flex items-center justify-between"><div>CPU</div><div id="cpu-val-pve-master">—</div></div>
+                  <div class="w-full h-3 bg-gray-200 dark:bg-gray-800 rounded mt-1 overflow-hidden">
+                    <div id="cpu-bar-pve-master" class="h-3 bg-accent1" style="width:0%"></div>
+                  </div>
+
+                  <div class="flex items-center justify-between mt-2"><div>Memory</div><div id="mem-val-pve-master">—</div></div>
+                  <div class="w-full h-3 bg-gray-200 dark:bg-gray-800 rounded mt-1 overflow-hidden">
+                    <div id="mem-bar-pve-master" class="h-3 bg-accent2" style="width:0%"></div>
+                  </div>
+                </div>
+              </div>
+
+              <div id="node-pve-gamehost" class="rounded-lg p-4 bg-gray-50 dark:bg-gray-900">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <div class="text-sm font-semibold">pve-gamehost</div>
+                    <div class="text-xs text-gray-500 dark:text-gray-400">Status: <span class="inline-block ml-1 text-xs font-medium" id="status-pve-gamehost">Unknown</span></div>
+                  </div>
+                  <div class="text-xs text-gray-500 dark:text-gray-400" id="updated-pve-gamehost">—</div>
+                </div>
+                <div class="mt-3 text-xs">
+                  <div class="flex items-center justify-between"><div>CPU</div><div id="cpu-val-pve-gamehost">—</div></div>
+                  <div class="w-full h-3 bg-gray-200 dark:bg-gray-800 rounded mt-1 overflow-hidden">
+                    <div id="cpu-bar-pve-gamehost" class="h-3 bg-accent1" style="width:0%"></div>
+                  </div>
+
+                  <div class="flex items-center justify-between mt-2"><div>Memory</div><div id="mem-val-pve-gamehost">—</div></div>
+                  <div class="w-full h-3 bg-gray-200 dark:bg-gray-800 rounded mt-1 overflow-hidden">
+                    <div id="mem-bar-pve-gamehost" class="h-3 bg-accent2" style="width:0%"></div>
+                  </div>
+                </div>
+              </div>
+
+              <div id="node-pve-mac" class="rounded-lg p-4 bg-gray-50 dark:bg-gray-900">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <div class="text-sm font-semibold">pve-mac</div>
+                    <div class="text-xs text-gray-500 dark:text-gray-400">Status: <span class="inline-block ml-1 text-xs font-medium" id="status-pve-mac">Unknown</span></div>
+                  </div>
+                  <div class="text-xs text-gray-500 dark:text-gray-400" id="updated-pve-mac">—</div>
+                </div>
+                <div class="mt-3 text-xs">
+                  <div class="flex items-center justify-between"><div>CPU</div><div id="cpu-val-pve-mac">—</div></div>
+                  <div class="w-full h-3 bg-gray-200 dark:bg-gray-800 rounded mt-1 overflow-hidden">
+                    <div id="cpu-bar-pve-mac" class="h-3 bg-accent1" style="width:0%"></div>
+                  </div>
+
+                  <div class="flex items-center justify-between mt-2"><div>Memory</div><div id="mem-val-pve-mac">—</div></div>
+                  <div class="w-full h-3 bg-gray-200 dark:bg-gray-800 rounded mt-1 overflow-hidden">
+                    <div id="mem-bar-pve-mac" class="h-3 bg-accent2" style="width:0%"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+        </article>
+
+        <!-- Panel 4: Web Game -->
+        <article class="rounded-xl p-6 bg-white dark:bg-gray-800 shadow-md hover:shadow-lg transition-shadow">
+          <div class="flex items-start justify-between">
+            <div>
+              <h2 class="text-lg font-semibold">Web Game</h2>
+              <p class="mt-2 text-sm text-gray-600 dark:text-gray-300">Why Yes, I am a Robot!</p>
+            </div>
+            <div class="h-12 w-12 rounded-lg bg-purple-500 flex items-center justify-center text-white font-bold">
+              G</div>
+          </div>
+          <div class="mt-4 flex gap-3">
+            <button id="startGame" class="px-3 py-1 bg-purple-500 text-white rounded">Play now!</button>
+          </div>
+        </article>
+
+        <!-- Panel 5: AI Server -->
+        <article class="rounded-xl p-6 bg-white dark:bg-gray-800 shadow-md hover:shadow-lg transition-shadow">
+          <div class="flex items-start justify-between">
+            <div>
+              <h2 class="text-lg font-semibold">AI Server</h2>
+              <p class="mt-2 text-sm text-gray-600 dark:text-gray-300">Llama.cpp based AI server.</p>
+            </div>
+            <div class="h-12 w-12 rounded-lg bg-black flex items-center justify-center text-white font-bold">
+              AI</div>
+          </div>
+          <div class="mt-4 flex gap-3">
+            <a href="https://ajgpt.duckdns.org/" id="goToLlama" class="px-3 py-1 bg-black text-white rounded">Try
+              Now!</a>
+          </div>
+        </article>
+
+        <!-- Wide Panel: Quick Links -->
+        <article class="sm:col-span-2 lg:col-span-3 rounded-xl p-6 bg-white dark:bg-gray-800 shadow-md">
+          <h3 class="text-lg font-semibold">Quick Links</h3>
+          <div class="mt-4 flex flex-wrap gap-3">
+            <a href="#" class="px-3 py-2 rounded-md bg-gray-100 dark:bg-gray-700">GitHub</a>
+            <a href="#" class="px-3 py-2 rounded-md bg-gray-100 dark:bg-gray-700">About Me</a>
+            <a href="#" class="px-3 py-2 rounded-md bg-gray-100 dark:bg-gray-700">Contact</a>
+          </div>
+        </article>
+      </section>
+
+      <footer class="mt-8 text-sm text-gray-600 dark:text-gray-400">
+        <div id="time"></div>
+      </footer>
+    </main>
+  </div>
+
+  <script src="src/app.js"></script>
+</body>
+
+</html>
