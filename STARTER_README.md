@@ -20,3 +20,5 @@ Then open http://localhost:8000 in your browser.
 Notes
 - The Proxmox fetch demo will attempt to GET `http://192.168.0.210/`. If that host is unreachable or CORS blocks the request, the output area will show the error.
 - This is a minimal starter; feel free to ask for routing, bundling, or ESM conversion if you want to grow the project.
+
+- UI tweak: the "AI Server" badge and action button are black in light mode and switch to white in dark mode for better contrast.

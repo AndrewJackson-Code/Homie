@@ -33,7 +33,7 @@
     themeToggle?.addEventListener('click', toggleTheme);
 
     aboutBtn?.addEventListener('click', () => {
-        alert('Homie — personal dashboard starter. Panels are placeholders.');
+        alert('A personal Dashboard in Pure HTML, JS and CSS. Constantly updated, may not always be available.\n\nBy Andrew J.');
     });
 
     blogDemo?.addEventListener('click', () => {
@@ -219,4 +219,130 @@
         once();
         setInterval(once, intervalMs || 5000);
     }
+
+    // --- Miniature chat box handling (contacts remote AI) ---
+    function safe$(id) { return document.getElementById(id); }
+
+    function appendMiniMessage(who, text, opts) {
+        // opts: { markdown: boolean }
+        const container = safe$('mini-chat-messages');
+        if (!container) return null;
+        const wrapper = document.createElement('div');
+        wrapper.className = who === 'user' ? 'text-right' : 'text-left';
+        const bubble = document.createElement('div');
+        bubble.className = 'inline-block max-w-[80%] px-3 py-1.5 rounded-md text-sm ' +
+            (who === 'user' ? 'bg-black text-white dark:bg-white dark:text-black' : 'bg-gray-200 dark:bg-gray-800 text-gray-900 dark:text-gray-100');
+
+        if (opts && opts.markdown && typeof window.marked === 'function' && window.DOMPurify) {
+            // render markdown to HTML, then sanitize
+            try {
+                const rawHtml = window.marked.parse(text || '');
+                bubble.innerHTML = window.DOMPurify.sanitize(rawHtml);
+                // add classes for code blocks
+                bubble.querySelectorAll('pre').forEach(p => p.classList.add('rounded', 'p-2', 'bg-gray-100', 'dark:bg-gray-800', 'text-xs', 'overflow-x-auto'));
+            } catch (e) {
+                bubble.textContent = text;
+            }
+        } else {
+            bubble.textContent = text;
+        }
+
+        wrapper.appendChild(bubble);
+        container.appendChild(wrapper);
+        // keep scroll at bottom
+        container.scrollTop = container.scrollHeight;
+        return bubble;
+    }
+
+    async function sendToAiServer(userText) {
+        // Uses an OpenAI-compatible Chat Completions endpoint
+        // Endpoint: https://ajgpt.duckdns.org/v1/chat/completions
+        // Payload: { model, messages } where messages is an array of { role, content }
+        // Optional globals (set on window): AI_MODEL, AI_KEY
+        const AI_ENDPOINT = 'https://ajgpt.duckdns.org/v1/chat/completions';
+        const MODEL = window.AI_MODEL || 'gpt-4o-mini';
+        const API_KEY = window.AI_KEY || null;
+
+        const controller = new AbortController();
+        const timeoutMs = 30000; // 30s for network + model generation
+        const timer = setTimeout(() => controller.abort(), timeoutMs);
+        try {
+            const headers = { 'Content-Type': 'application/json' };
+            if (API_KEY) headers['Authorization'] = 'Bearer ' + API_KEY;
+
+            const body = JSON.stringify({
+                model: MODEL,
+                messages: [
+                    { role: 'system', content: 'You are a mini-chat assistant. Never use markdown, only ever use plain text. If the user asks for code, or a question which requires depth to answer, refuse to answer and kindly and warmly direct them to click the "Start Talking" button above to get in depth responses.' },
+                    { role: 'user', content: userText }
+                ],
+                max_tokens: 512,
+                temperature: 0.2
+            });
+
+            const res = await fetch(AI_ENDPOINT, {
+                method: 'POST',
+                headers,
+                body,
+                signal: controller.signal,
+                cache: 'no-store'
+            });
+            clearTimeout(timer);
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            const ct = (res.headers.get('content-type') || '');
+            if (ct.includes('application/json')) {
+                const j = await res.json();
+                // Try OpenAI-style response: choices[0].message.content
+                const choice = Array.isArray(j.choices) && j.choices[0];
+                const msg = choice?.message?.content ?? choice?.text ?? null;
+                if (msg) return { ok: true, reply: msg };
+                // Fallbacks
+                if (j.reply) return { ok: true, reply: j.reply };
+                return { ok: true, reply: JSON.stringify(j) };
+            } else {
+                const txt = await res.text();
+                return { ok: true, reply: txt };
+            }
+        } catch (err) {
+            clearTimeout(timer);
+            return { ok: false, error: (err.name === 'AbortError') ? 'Request timed out' : err.toString() };
+        }
+    }
+
+    // Wire up form if present
+    window.addEventListener('DOMContentLoaded', () => {
+        const form = safe$('mini-chat-form');
+        const input = safe$('mini-chat-input');
+        if (!form || !input) return;
+
+        form.addEventListener('submit', async (ev) => {
+            ev.preventDefault();
+            const v = input.value.trim();
+            if (!v) return;
+            appendMiniMessage('user', v);
+            input.value = '';
+
+            // Show loading placeholder
+            const loadingBubble = appendMiniMessage('ai', '…');
+            try {
+                const res = await sendToAiServer(v);
+                if (loadingBubble) {
+                    if (res.ok) {
+                        // render markdown-safe HTML for AI replies
+                        const parent = loadingBubble.parentElement;
+                        const newBubble = appendMiniMessage('ai', res.reply, { markdown: true });
+                        // remove loading bubble wrapper
+                        if (parent && parent.parentElement) parent.parentElement.removeChild(parent);
+                    } else {
+                        loadingBubble.textContent = `Error: ${res.error}`;
+                    }
+                }
+                if (!res.ok) console.error('AI fetch error:', res.error);
+            } catch (err) {
+                if (loadingBubble) loadingBubble.textContent = 'Error contacting AI';
+                console.error('Unexpected AI error', err);
+            }
+        });
+    });
+
 })();

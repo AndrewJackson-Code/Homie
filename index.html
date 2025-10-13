@@ -74,6 +74,7 @@
       content: '';
       position: absolute;
       inset: calc(var(--fancy-border-inset) - 10px);
+      inset: calc(var(--fancy-border-inset) - 10px);
       border-radius: calc(var(--fancy-border-radius) + 8px);
       background: var(--fancy-halo);
       filter: blur(10px);
@@ -107,17 +108,23 @@
     }
 
     .fancy-black {
-      --fancy-color: rgba(51, 65, 85, 0.95);
-      --fancy-halo: rgba(51, 65, 85, 0.035);
+      --fancy-color: rgba(255, 255, 255, 0.8);
+      --fancy-halo: rgba(255, 255, 255, 0.045);
     }
+
+    /* Markdown code block styling inside mini chat */
+    #mini-chat .inline-block pre { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, 'Roboto Mono', 'Ubuntu Mono', monospace; }
+    #mini-chat .inline-block code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, 'Roboto Mono', 'Ubuntu Mono', monospace; }
+    #mini-chat .inline-block pre { background: rgba(0,0,0,0.03); padding: 0.5rem; border-radius: 6px; }
+    .dark #mini-chat .inline-block pre { background: rgba(255,255,255,0.03); }
   </style>
 </head>
 
 <body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen">
-  <div class="max-w-6xl mx-auto p-6">
+  <div class="max-w-6xl mx-auto p-4">
     <header class="flex items-center justify-between mb-8">
-      <h1 class="text-2xl font-bold">Andrew Jackson</h1>
-      <div class="flex items-center gap-3">
+      <h1 class="text-2xl font-bold">Welcome</h1>
+      <div class="flex items-center gap-2.5">
         <button id="themeToggle"
           class="px-1.5 py-1 bg-white/80 dark:bg-gray-800 rounded-md shadow-sm">Day/Night</button>
         <button id="aboutBtn" class="px-3 py-1 bg-accent2/90 text-white rounded-md shadow-sm">About</button>
@@ -125,47 +132,12 @@
     </header>
 
     <main>
-      <section class="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+      <section class="grid gap-2.5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
 
-        <!-- Panel 1: Blog -->
-        <article
-          class="rounded-xl p-6 bg-white dark:bg-gray-800 shadow-md hover:shadow-lg transition-shadow fancy-border fancy-blue">
-          <div class="flex items-start justify-between">
-            <div>
-              <h2 class="text-lg font-semibold">Blog</h2>
-              <p class="mt-2 text-sm text-gray-600 dark:text-gray-300">A personal blog.
-              </p>
-            </div>
-            <div class="h-12 w-12 rounded-lg bg-blue-600 flex items-center justify-center text-white font-bold">
-              B</div>
-          </div>
-          <div class="mt-4 flex gap-3">
-            <a href="#" class="px-3 py-1 bg-blue-600 text-white rounded">Take a Read</a>
-          </div>
-        </article>
-
-        <!-- Panel 2: Mealie -->
-        <article
-          class="rounded-xl p-6 bg-white dark:bg-gray-800 shadow-md hover:shadow-lg transition-shadow fancy-border fancy-yellow">
-          <div class="flex items-start justify-between">
-            <div>
-              <h2 class="text-lg font-semibold">Mealie</h2>
-              <p class="mt-2 text-sm text-gray-600 dark:text-gray-300">A recipie book app.</p>
-            </div>
-            <div class="h-12 w-12 rounded-lg bg-yellow-500 flex items-center justify-center text-white font-bold">
-              M</div>
-          </div>
-          <div class="mt-4 flex gap-3">
-            <a href="https://aj-mealie.duckdns.org/" id="goToMealie"
-              class="px-3 py-1 bg-yellow-500 text-white rounded">Try
-              Now</a>
-          </div>
-        </article>
-
-        <!-- Panel 3: Proxmox -->
+        <!-- Panel 1: Proxmox -->
         <!-- Make this panel two rows tall and positioned at the right-most column on sm/lg -->
         <article
-          class="rounded-xl p-6 bg-white dark:bg-gray-800 shadow-md hover:shadow-lg transition-shadow fancy-border fancy-orange sm:col-start-2 sm:row-span-2 lg:col-start-3 lg:row-span-2">
+          class="rounded-xl p-2.5 bg-white dark:bg-gray-800 shadow-md hover:shadow-lg transition-shadow fancy-border fancy-orange sm:col-start-1 sm:row-span-2 lg:col-start-1 lg:row-span-2">
           <div class="flex items-start justify-between">
             <div>
               <h2 class="text-lg font-semibold">Proxmox</h2>
@@ -175,7 +147,7 @@
               P</div>
           </div>
 
-          <!-- <div class="mt-4 flex items-center gap-3">
+          <!-- <div class="mt-4 flex items-center gap-2.5">
               <button id="startPolling" class="px-3 py-1 bg-green-600 text-white rounded">Start Polling</button>
               <button id="stopPolling" class="px-3 py-1 bg-red-600 text-white rounded hidden">Stop Polling</button>
             </div> -->
@@ -281,9 +253,59 @@
           </div>
         </article>
 
-        <!-- Panel 4: Web Game -->
+        <!-- Panel 2: Blog -->
         <article
-          class="rounded-xl p-6 bg-white dark:bg-gray-800 shadow-md hover:shadow-lg transition-shadow fancy-border fancy-purple">
+          class="rounded-xl p-2.5 bg-white dark:bg-gray-800 shadow-md hover:shadow-lg transition-shadow fancy-border fancy-blue">
+          <div class="flex items-start justify-between">
+            <div>
+              <h2 class="text-lg font-semibold">Blog</h2>
+              <p class="mt-2 text-sm text-gray-600 dark:text-gray-300">A personal blog.
+              </p>
+            </div>
+            <div class="h-12 w-12 rounded-lg bg-blue-500 flex items-center justify-center text-white font-bold">
+              B</div>
+          </div>
+          <div class="mt-4 flex gap-2.5">
+            <a href="#" class="px-3 py-1 bg-blue-500 text-white rounded">Take a Read</a>
+          </div>
+        </article>
+
+        <!-- Panel 3: Mealie -->
+        <article
+          class="rounded-xl p-2.5 bg-white dark:bg-gray-800 shadow-md hover:shadow-lg transition-shadow fancy-border fancy-yellow">
+          <div class="flex items-start justify-between">
+            <div>
+              <h2 class="text-lg font-semibold">Mealie</h2>
+              <p class="mt-2 text-sm text-gray-600 dark:text-gray-300">A recipie book app.</p>
+            </div>
+            <div class="h-12 w-12 rounded-lg bg-yellow-500 flex items-center justify-center text-white font-bold">
+              M</div>
+          </div>
+          <div class="mt-4 flex gap-2.5">
+            <a href="https://aj-mealie.duckdns.org/" id="goToMealie"
+              class="px-3 py-1 bg-yellow-500 text-white rounded">Try
+              Now</a>
+          </div>
+        </article>
+
+
+        <!-- Panel 4: Podman Container Status Panel -->
+        <article
+          class="rounded-xl p-2.5 bg-white dark:bg-gray-800 shadow-md hover:shadow-lg transition-shadow fancy-border fancy-blue">
+          <div class="flex items-start justify-between">
+            <div>
+              <h2 class="text-lg font-semibold">Podman Containers</h2>
+              <p class="mt-2 text-sm text-gray-600 dark:text-gray-300"> Track Podman Container Status.
+              </p>
+            </div>
+            <div class="h-12 w-12 rounded-lg bg-blue-800 flex items-center justify-center text-white font-bold">
+              P</div>
+          </div>
+        </article>
+
+        <!-- Panel 5: Web Game -->
+        <article
+          class="rounded-xl p-2.5 bg-white dark:bg-gray-800 shadow-md hover:shadow-lg transition-shadow fancy-border fancy-purple">
           <div class="flex items-start justify-between">
             <div>
               <h2 class="text-lg font-semibold">Web Game</h2>
@@ -292,33 +314,48 @@
             <div class="h-12 w-12 rounded-lg bg-purple-500 flex items-center justify-center text-white font-bold">
               G</div>
           </div>
-          <div class="mt-4 flex gap-3">
-            <button id="goToGame" class="px-3 py-1 bg-purple-500 text-white rounded">Play now!</button>
+          <div class="mt-4 flex gap-2.5">
+            <a href="#" id="goToGame" class="px-3 py-1 bg-purple-500 text-white rounded">Play now!</a>
           </div>
         </article>
 
-        <!-- Panel 5: AI Server -->
-        <article
-          class="rounded-xl p-6 bg-white dark:bg-gray-800 shadow-md hover:shadow-lg transition-shadow fancy-border fancy-black">
+        <!-- Panel 6: AI Server -->
+        <article id="ai-server-panel"
+          class="rounded-xl p-2.5 bg-white dark:bg-gray-800 shadow-md hover:shadow-lg transition-shadow fancy-border fancy-black m:col-start-1 row-span-1 sm:col-span-2 md:col-span-3 lg:col-start-1">
           <div class="flex items-start justify-between">
             <div>
               <h2 class="text-lg font-semibold">AI Server</h2>
               <p class="mt-2 text-sm text-gray-600 dark:text-gray-300">Llama.cpp based AI server.</p>
             </div>
-            <div class="h-12 w-12 rounded-lg bg-black flex items-center justify-center text-white font-bold">
+            <div
+              class="h-12 w-12 rounded-lg bg-black text-white dark:bg-white dark:text-black flex items-center justify-center font-bold">
               AI</div>
           </div>
-          <div class="mt-4 flex gap-3">
-            <a href="https://ajgpt.duckdns.org/" id="goToLlama" class="px-3 py-1 bg-black text-white rounded">Start
+          <div class="mt-4 flex gap-2.5">
+            <a href="https://ajgpt.duckdns.org/" id="goToLlama"
+              class="px-3 py-1 bg-black text-white dark:bg-white dark:text-black rounded">Start
               Talking</a>
+          </div>
+          <div class="mt-4"><span class="mt-2 text-xs text-gray-600 dark:text-gray-300"> Or, try a small chat here...</span> </div>
+          <!-- Miniature chat box -->
+          <div class="mt-4">
+            <div id="mini-chat" class="w-full h-56 bg-gray-50 dark:bg-gray-900 rounded-lg p-2.5 flex flex-col">
+              <div id="mini-chat-messages" class="flex-1 overflow-y-auto text-sm space-y-2 pb-2"></div>
+              <form id="mini-chat-form" class="mt-2 flex gap-2">
+                <input id="mini-chat-input" type="text" placeholder="Say something..."
+                  class="flex-1 px-3 py-2 rounded bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-sm focus:outline-none" />
+                <button type="submit"
+                  class="px-3 py-2 bg-black text-white dark:bg-white dark:text-black rounded text-sm">Send</button>
+              </form>
+            </div>
           </div>
         </article>
 
         <!-- Wide Panel: Quick Links -->
         <article
-          class="sm:col-span-2 lg:col-span-3 rounded-xl p-6 bg-white dark:bg-gray-800 shadow-md fancy-border fancy-teal">
+          class="sm:col-span-2 md:col-span-3 lg:col-span-3 rounded-xl p-2.5 bg-white dark:bg-gray-800 shadow-md fancy-border fancy-teal">
           <h3 class="text-lg font-semibold">Quick Links</h3>
-          <div class="mt-4 flex flex-wrap gap-3">
+          <div class="mt-4 flex flex-wrap gap-2.5">
             <a href="https://github.com/AndrewJackson-Code"
               class="px-3 py-2 rounded-md bg-gray-100 dark:bg-gray-700">GitHub</a>
             <a href="#" class="px-3 py-2 rounded-md bg-gray-100 dark:bg-gray-700">About Me</a>
@@ -333,6 +370,9 @@
     </main>
   </div>
 
+  <!-- Markdown rendering and sanitization for AI responses -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.4.0/purify.min.js"></script>
   <script src="src/app.js"></script>
 </body>
 
