@@ -33,6 +33,12 @@
     setInterval(updateTime, 1000);
     updateTime();
   </script>
+      <style>
+    /* Hide the small per-panel 'updated' timestamps entirely */
+      [id^="updated-"] {
+        display: none !important;
+    }
+    </style>
 </head>
 
 <body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen">
@@ -76,7 +82,8 @@
               M</div>
           </div>
           <div class="mt-4 flex gap-3">
-            <a href="https://aj-mealie.duckdns.org/" id="goToMealie" class="px-3 py-1 bg-yellow-600 text-white rounded">Try
+            <a href="https://aj-mealie.duckdns.org/" id="goToMealie"
+              class="px-3 py-1 bg-yellow-600 text-white rounded">Try
               Now!</a>
           </div>
         </article>
@@ -93,77 +100,98 @@
             <div class="h-12 w-12 rounded-lg bg-orange-500 flex items-center justify-center text-white font-bold">
               P</div>
           </div>
-          
-            <!-- <div class="mt-4 flex items-center gap-3">
+
+          <!-- <div class="mt-4 flex items-center gap-3">
               <button id="startPolling" class="px-3 py-1 bg-green-600 text-white rounded">Start Polling</button>
               <button id="stopPolling" class="px-3 py-1 bg-red-600 text-white rounded hidden">Stop Polling</button>
             </div> -->
 
-            <div id="nodesContainer" class="mt-4 grid grid-cols-1 gap-4">
-              <!-- Node cards will be injected here by src/app.js -->
-              <div id="node-pve-master" class="rounded-lg p-4 bg-gray-50 dark:bg-gray-900">
-                <div class="flex items-center justify-between">
-                  <div>
-                    <div class="text-sm font-semibold">pve-master</div>
-                    <div class="text-xs text-gray-500 dark:text-gray-400">Status: <span class="inline-block ml-1 text-xs font-medium" id="status-pve-master">Unknown</span></div>
-                  </div>
-                  <div class="text-xs text-gray-500 dark:text-gray-400" id="updated-pve-master">—</div>
+          <div id="nodesContainer" class="mt-4 grid grid-cols-1 gap-4">
+            <!-- Node cards will be injected here by src/app.js -->
+            <div id="node-pve-master" class="rounded-lg p-4 bg-gray-50 dark:bg-gray-900">
+              <div class="flex items-center justify-between">
+                <div>
+                  <div class="text-sm font-semibold">pve-master</div>
+                  <div class="text-xs text-gray-500 dark:text-gray-400">Status: <span
+                      class="inline-block ml-1 text-xs font-medium" id="status-pve-master">Unknown</span></div>
                 </div>
-                <div class="mt-3 text-xs">
-                  <div class="flex items-center justify-between"><div>CPU</div><div id="cpu-val-pve-master">—</div></div>
-                  <div class="w-full h-3 bg-gray-200 dark:bg-gray-800 rounded mt-1 overflow-hidden">
-                    <div id="cpu-bar-pve-master" class="h-3 bg-accent1" style="width:0%"></div>
-                  </div>
-
-                  <div class="flex items-center justify-between mt-2"><div>Memory</div><div id="mem-val-pve-master">—</div></div>
-                  <div class="w-full h-3 bg-gray-200 dark:bg-gray-800 rounded mt-1 overflow-hidden">
-                    <div id="mem-bar-pve-master" class="h-3 bg-accent2" style="width:0%"></div>
-                  </div>
-                </div>
+                <div class="text-xs text-gray-500 dark:text-gray-400" id="updated-pve-master">—</div>
               </div>
-
-              <div id="node-pve-gamehost" class="rounded-lg p-4 bg-gray-50 dark:bg-gray-900">
+              <div class="mt-3 text-xs">
                 <div class="flex items-center justify-between">
-                  <div>
-                    <div class="text-sm font-semibold">pve-gamehost</div>
-                    <div class="text-xs text-gray-500 dark:text-gray-400">Status: <span class="inline-block ml-1 text-xs font-medium" id="status-pve-gamehost">Unknown</span></div>
-                  </div>
-                  <div class="text-xs text-gray-500 dark:text-gray-400" id="updated-pve-gamehost">—</div>
+                  <div>CPU</div>
+                  <div id="cpu-val-pve-master">—</div>
                 </div>
-                <div class="mt-3 text-xs">
-                  <div class="flex items-center justify-between"><div>CPU</div><div id="cpu-val-pve-gamehost">—</div></div>
-                  <div class="w-full h-3 bg-gray-200 dark:bg-gray-800 rounded mt-1 overflow-hidden">
-                    <div id="cpu-bar-pve-gamehost" class="h-3 bg-accent1" style="width:0%"></div>
-                  </div>
-
-                  <div class="flex items-center justify-between mt-2"><div>Memory</div><div id="mem-val-pve-gamehost">—</div></div>
-                  <div class="w-full h-3 bg-gray-200 dark:bg-gray-800 rounded mt-1 overflow-hidden">
-                    <div id="mem-bar-pve-gamehost" class="h-3 bg-accent2" style="width:0%"></div>
-                  </div>
+                <div class="w-full h-3 bg-gray-200 dark:bg-gray-800 rounded mt-1 overflow-hidden">
+                  <div id="cpu-bar-pve-master" class="h-3 bg-accent1" style="width:0%"></div>
                 </div>
-              </div>
 
-              <div id="node-pve-mac" class="rounded-lg p-4 bg-gray-50 dark:bg-gray-900">
-                <div class="flex items-center justify-between">
-                  <div>
-                    <div class="text-sm font-semibold">pve-mac</div>
-                    <div class="text-xs text-gray-500 dark:text-gray-400">Status: <span class="inline-block ml-1 text-xs font-medium" id="status-pve-mac">Unknown</span></div>
-                  </div>
-                  <div class="text-xs text-gray-500 dark:text-gray-400" id="updated-pve-mac">—</div>
+                <div class="flex items-center justify-between mt-2">
+                  <div>Memory</div>
+                  <div id="mem-val-pve-master">—</div>
                 </div>
-                <div class="mt-3 text-xs">
-                  <div class="flex items-center justify-between"><div>CPU</div><div id="cpu-val-pve-mac">—</div></div>
-                  <div class="w-full h-3 bg-gray-200 dark:bg-gray-800 rounded mt-1 overflow-hidden">
-                    <div id="cpu-bar-pve-mac" class="h-3 bg-accent1" style="width:0%"></div>
-                  </div>
-
-                  <div class="flex items-center justify-between mt-2"><div>Memory</div><div id="mem-val-pve-mac">—</div></div>
-                  <div class="w-full h-3 bg-gray-200 dark:bg-gray-800 rounded mt-1 overflow-hidden">
-                    <div id="mem-bar-pve-mac" class="h-3 bg-accent2" style="width:0%"></div>
-                  </div>
+                <div class="w-full h-3 bg-gray-200 dark:bg-gray-800 rounded mt-1 overflow-hidden">
+                  <div id="mem-bar-pve-master" class="h-3 bg-accent2" style="width:0%"></div>
                 </div>
               </div>
             </div>
+
+            <div id="node-pve-gamehost" class="rounded-lg p-4 bg-gray-50 dark:bg-gray-900">
+              <div class="flex items-center justify-between">
+                <div>
+                  <div class="text-sm font-semibold">pve-gamehost</div>
+                  <div class="text-xs text-gray-500 dark:text-gray-400">Status: <span
+                      class="inline-block ml-1 text-xs font-medium" id="status-pve-gamehost">Unknown</span></div>
+                </div>
+                <div class="text-xs text-gray-500 dark:text-gray-400" id="updated-pve-gamehost">—</div>
+              </div>
+              <div class="mt-3 text-xs">
+                <div class="flex items-center justify-between">
+                  <div>CPU</div>
+                  <div id="cpu-val-pve-gamehost">—</div>
+                </div>
+                <div class="w-full h-3 bg-gray-200 dark:bg-gray-800 rounded mt-1 overflow-hidden">
+                  <div id="cpu-bar-pve-gamehost" class="h-3 bg-accent1" style="width:0%"></div>
+                </div>
+
+                <div class="flex items-center justify-between mt-2">
+                  <div>Memory</div>
+                  <div id="mem-val-pve-gamehost">—</div>
+                </div>
+                <div class="w-full h-3 bg-gray-200 dark:bg-gray-800 rounded mt-1 overflow-hidden">
+                  <div id="mem-bar-pve-gamehost" class="h-3 bg-accent2" style="width:0%"></div>
+                </div>
+              </div>
+            </div>
+
+            <div id="node-pve-mac" class="rounded-lg p-4 bg-gray-50 dark:bg-gray-900">
+              <div class="flex items-center justify-between">
+                <div>
+                  <div class="text-sm font-semibold">pve-mac</div>
+                  <div class="text-xs text-gray-500 dark:text-gray-400">Status: <span
+                      class="inline-block ml-1 text-xs font-medium" id="status-pve-mac">Unknown</span></div>
+                </div>
+                <div class="text-xs text-gray-500 dark:text-gray-400" id="updated-pve-mac">—</div>
+              </div>
+              <div class="mt-3 text-xs">
+                <div class="flex items-center justify-between">
+                  <div>CPU</div>
+                  <div id="cpu-val-pve-mac">—</div>
+                </div>
+                <div class="w-full h-3 bg-gray-200 dark:bg-gray-800 rounded mt-1 overflow-hidden">
+                  <div id="cpu-bar-pve-mac" class="h-3 bg-accent1" style="width:0%"></div>
+                </div>
+
+                <div class="flex items-center justify-between mt-2">
+                  <div>Memory</div>
+                  <div id="mem-val-pve-mac">—</div>
+                </div>
+                <div class="w-full h-3 bg-gray-200 dark:bg-gray-800 rounded mt-1 overflow-hidden">
+                  <div id="mem-bar-pve-mac" class="h-3 bg-accent2" style="width:0%"></div>
+                </div>
+              </div>
+            </div>
+          </div>
         </article>
 
         <!-- Panel 4: Web Game -->
