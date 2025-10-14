@@ -6,7 +6,8 @@
 
 (function () {
     const html = document.documentElement;
-    const themeToggle = document.getElementById('themeToggle');
+    const themeToggleSwitch = document.getElementById('themeToggleSwitch');
+    const themeToggleKnob = document.getElementById('themeToggleKnob');
     const aboutBtn = document.getElementById('aboutBtn');
     const blogDemo = document.getElementById('blogDemo');
     const startGame = document.getElementById('startGame');
@@ -14,26 +15,93 @@
 
     // Persist theme in localStorage
     const THEME_KEY = 'homie:theme';
+    // Track whether the user explicitly selected a theme. If false, we follow system preference.
+    let userPref = false;
+    const prefersDarkMQ = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
+
     function loadTheme() {
         try {
             const t = localStorage.getItem(THEME_KEY);
-            if (t === 'dark') html.classList.add('dark');
-            else html.classList.remove('dark');
+            if (t === 'dark') {
+                html.classList.add('dark');
+                userPref = true;
+            } else if (t === 'light') {
+                html.classList.remove('dark');
+                userPref = true;
+            } else {
+                // No explicit preference: follow system if available
+                if (prefersDarkMQ) {
+                    html.classList.toggle('dark', prefersDarkMQ.matches);
+                } else {
+                    html.classList.remove('dark');
+                }
+                userPref = false;
+            }
         } catch (e) {
             // ignore
         }
     }
     loadTheme();
 
+    // Sync the visual state of the new switch with the current theme
+    function syncToggleUI() {
+        const isDark = html.classList.contains('dark');
+        if (!themeToggleSwitch) return;
+        themeToggleSwitch.setAttribute('aria-checked', isDark ? 'true' : 'false');
+        // Use Tailwind utility friendly classes for transform
+        if (themeToggleKnob) {
+            themeToggleKnob.classList.add('transition-transform');
+            themeToggleKnob.classList.toggle('translate-x-6', isDark);
+            themeToggleKnob.classList.toggle('translate-x-0', !isDark);
+        }
+        // adjust background for visual cue
+        themeToggleSwitch.classList.toggle('bg-gray-700', isDark);
+        themeToggleSwitch.classList.toggle('bg-gray-200', !isDark);
+    }
+    // Initial sync after load
+    syncToggleUI();
+
     function toggleTheme() {
         const isDark = html.classList.toggle('dark');
-        try { localStorage.setItem(THEME_KEY, isDark ? 'dark' : 'light'); } catch (e) { }
+        try {
+            localStorage.setItem(THEME_KEY, isDark ? 'dark' : 'light');
+            userPref = true;
+        } catch (e) { }
+        return isDark;
     }
 
-    themeToggle?.addEventListener('click', toggleTheme);
+    // Wrap toggleTheme to also update UI when used
+    function handleToggleFromUI() {
+        toggleTheme();
+        syncToggleUI();
+    }
+
+    // Click and keyboard handlers for the switch
+    if (themeToggleSwitch) {
+        themeToggleSwitch.addEventListener('click', (ev) => {
+            ev.preventDefault();
+            handleToggleFromUI();
+        });
+        themeToggleSwitch.addEventListener('keydown', (ev) => {
+            if (ev.key === ' ' || ev.key === 'Enter') {
+                ev.preventDefault();
+                handleToggleFromUI();
+            }
+        });
+    }
+
+    // If the user hasn't chosen a theme, respond to system changes
+    if (prefersDarkMQ && !userPref) {
+        prefersDarkMQ.addEventListener('change', (e) => {
+            if (!userPref) {
+                html.classList.toggle('dark', e.matches);
+                syncToggleUI();
+            }
+        });
+    }
 
     aboutBtn?.addEventListener('click', () => {
-        alert('A personal Dashboard in Pure HTML, JS and CSS. Constantly updated, may not always be available.\n\nBy Andrew J.');
+        alert('A personal Dashboard in Pure HTML, JS and CSS with a little help from TailwindCSS. Constantly updated, may not always be available.\n\nBy Andrew J.');
     });
 
     blogDemo?.addEventListener('click', () => {
