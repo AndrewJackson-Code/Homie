@@ -262,27 +262,31 @@
             const card = document.createElement('div');
             card.className = 'rounded-lg p-4 bg-gray-50 dark:bg-gray-900';
 
-            // Top row: title and status
+            // Top area: title with status on the line below (match Proxmox layout)
             const top = document.createElement('div');
             top.className = 'flex items-start justify-between';
             const left = document.createElement('div');
             const title = document.createElement('div');
             title.className = 'text-sm font-semibold';
             title.textContent = displayName;
-            const subtitle = document.createElement('div');
-            subtitle.className = 'text-xs text-gray-500 dark:text-gray-400';
-            subtitle.textContent = '';
-            left.appendChild(title);
-            left.appendChild(subtitle);
 
-            const status = document.createElement('div');
-            // Show plain 'Online' or 'Offline' similar to Proxmox node cards
+            // Status line (placed below the title). Prefix with 'Status: '
             const displayStatus = isRunning ? 'Online' : 'Offline';
-            status.className = isRunning ? 'text-green-500 text-xs' : 'text-red-500 text-xs';
-            status.textContent = displayStatus;
+            const statusLine = document.createElement('div');
+            statusLine.className = 'mt-1 text-xs';
+            const statusLabel = document.createElement('span');
+            statusLabel.className = 'text-gray-600 dark:text-gray-400 font-medium';
+            statusLabel.textContent = 'Status: ';
+            const statusVal = document.createElement('span');
+            statusVal.className = isRunning ? 'text-green-500' : 'text-red-500';
+            statusVal.textContent = displayStatus;
+            statusLine.appendChild(statusLabel);
+            statusLine.appendChild(statusVal);
+
+            left.appendChild(title);
+            left.appendChild(statusLine);
 
             top.appendChild(left);
-            top.appendChild(status);
             card.appendChild(top);
 
             // Divider like Proxmox small separator
