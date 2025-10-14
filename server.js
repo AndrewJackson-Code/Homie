@@ -159,8 +159,32 @@ app.get('/api/proxmox/root', async (req, res) => {
   }
 });
 
-// Serve static files (the static frontend)
-app.use(express.static(path.join(__dirname)));
+// Block access to sensitive files and directories (dotfiles, logs, server source)
+app.use((req, res, next) => {
+  // Deny access to dotfiles, logs, and server/package sources
+  const blockedExact = ['/server.js', '/package.json', '/package-lock.json', '/.env'];
+  if (blockedExact.includes(req.path) || req.path.startsWith('/logs') || req.path.startsWith('/.')) {
+    return res.status(403).send('Forbidden');
+  }
+  next();
+});
+
+// Client-visible environment JS (safe values only; DO NOT expose secrets or tokens)
+// Example response: window.HOMIE_ENV = { PROXMOX_CLIENT_API_BASE: "/api/proxmox", AI_ADDRESS: "https://..." };
+app.get('/env.js', (req, res) => {
+  const clientBase = process.env.PROXMOX_CLIENT_API_BASE || '/api/proxmox';
+  const aiAddr = process.env.AI_ADDRESS || null;
+  const payload = {
+    PROXMOX_CLIENT_API_BASE: clientBase,
+    AI_ADDRESS: aiAddr
+  };
+  res.set('Content-Type', 'application/javascript');
+  // Do NOT include PROXMOX_API_TOKEN or any other secret here
+  res.send(`window.HOMIE_ENV = ${JSON.stringify(payload)};`);
+});
+
+// Serve static files (the static frontend), but ignore dotfiles so .env cannot be downloaded
+app.use(express.static(path.join(__dirname), { dotfiles: 'ignore' }));
 
 app.listen(PORT, () => {
   console.log(`Homie proxy server listening on http://localhost:${PORT}`);
