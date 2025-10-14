@@ -186,7 +186,7 @@
         if (!result.ok) {
             statusEl.textContent = 'Offline';
             statusEl.className = 'text-red-500';
-            updatedEl.textContent = nowShort();
+                if (updatedEl) updatedEl.textContent = 'Last updated: ' + nowShort();
             cpuVal.textContent = '—';
             memVal.textContent = '—';
             if (cpuBar) cpuBar.style.width = '0%';
@@ -196,7 +196,7 @@
 
         statusEl.textContent = result.online ? 'Online' : 'Offline';
         statusEl.className = result.online ? 'text-green-500' : 'text-red-500';
-        updatedEl.textContent = nowShort();
+            if (updatedEl) updatedEl.textContent = 'Last updated: ' + nowShort();
 
         if (result.cpu != null) {
             cpuVal.textContent = formatPct(result.cpu);
@@ -247,7 +247,7 @@
             el.className = 'col-span-1 p-4 rounded-lg bg-gray-50 dark:bg-gray-900';
             el.textContent = 'Unexpected response format';
             root.appendChild(el);
-            if (updated) updated.textContent = nowShort();
+            if (updated) updated.textContent = 'Last updated: ' + nowShort();
             return;
         }
 
@@ -315,7 +315,7 @@
             root.appendChild(card);
         });
 
-        if (updated) updated.textContent = nowShort();
+        if (updated) updated.textContent = 'Last updated: ' + nowShort();
     }
 
     async function pollPodmanOnce() {
@@ -391,7 +391,7 @@
         if (!statusEl) return;
         statusEl.textContent = online ? 'Online' : 'Offline';
         statusEl.className = online ? 'text-green-500' : 'text-red-500';
-        if (updatedEl) updatedEl.textContent = nowShort();
+        if (updatedEl) updatedEl.textContent = 'Last updated: ' + nowShort();
         // Optionally show status in title attribute
         statusEl.title = statusText || '';
     }
