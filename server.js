@@ -9,12 +9,22 @@ require('dotenv').config();
 const app = express();
 app.use(cors());
 
-// Ensure logs directory exists
+// Logging toggle (default: enabled). Set LOGGING=0 or LOGGING=false to disable file logging.
+const LOGGING_ENABLED = !(process.env.LOGGING === '0' || process.env.LOGGING === 'false');
+if (!LOGGING_ENABLED) {
+  console.log('LOGGING is disabled (LOGGING=0 or LOGGING=false). Proxmox request/response logging to logs/proxmox.jsonl is turned off.');
+}
+
+// Prepare logs path only when logging is enabled
 const LOG_DIR = path.join(__dirname, 'logs');
-try { fs.mkdirSync(LOG_DIR, { recursive: true }); } catch (e) { /* ignore */ }
-const LOG_FILE = path.join(LOG_DIR, 'proxmox.jsonl');
+let LOG_FILE = null;
+if (LOGGING_ENABLED) {
+  try { fs.mkdirSync(LOG_DIR, { recursive: true }); } catch (e) { /* ignore */ }
+  LOG_FILE = path.join(LOG_DIR, 'proxmox.jsonl');
+}
 
 function appendLog(obj) {
+  if (!LOGGING_ENABLED) return; // no-op when logging disabled
   try {
     fs.appendFileSync(LOG_FILE, JSON.stringify(obj) + '\n');
   } catch (e) {
