@@ -276,8 +276,10 @@
             left.appendChild(subtitle);
 
             const status = document.createElement('div');
-            status.className = isRunning ? 'text-green-500 text-sm font-medium' : 'text-red-500 text-sm font-medium';
-            status.textContent = statusText;
+            // Show plain 'Online' or 'Offline' similar to Proxmox node cards
+            const displayStatus = isRunning ? 'Online' : 'Offline';
+            status.className = isRunning ? 'text-green-500 text-xs' : 'text-red-500 text-xs';
+            status.textContent = displayStatus;
 
             top.appendChild(left);
             top.appendChild(status);
@@ -301,14 +303,14 @@
                 uptimeText = startedAt;
             }
             const uptime = document.createElement('div');
-            uptime.textContent = `Uptime: ${uptimeText}`;
+            uptime.textContent = `${uptimeText}`;
 
             const updatedSmall = document.createElement('div');
             updatedSmall.className = 'text-xs text-gray-500 dark:text-gray-400';
             updatedSmall.textContent = nowShort();
 
             bottom.appendChild(uptime);
-            bottom.appendChild(updatedSmall);
+            //bottom.appendChild(updatedSmall);
             card.appendChild(bottom);
             root.appendChild(card);
         });

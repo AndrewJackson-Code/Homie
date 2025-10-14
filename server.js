@@ -177,9 +177,11 @@ app.get('/api/podman/containers', async (req, res) => {
     let body = null;
     try { body = JSON.parse(text); } catch (e) { /* ignore parse errors */ }
 
+    // Scrub the API key from the logged URL to avoid writing secrets into logs.
+    const scrubbedTarget = String(target).replace(/([?&]key=)[^&]*/i, '$1[REDACTED]');
     appendLog({
       ts: new Date().toISOString(),
-      url: target,
+      url: scrubbedTarget,
       route: '/api/podman/containers',
       status: proxRes.status,
       body_snippet: (typeof text === 'string') ? text.slice(0, 2000) : null
