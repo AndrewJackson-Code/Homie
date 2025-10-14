@@ -121,6 +121,10 @@
     let pollTimer = null;
     const POLL_INTERVAL = 3000;
 
+    // Podman polling (separate interval)
+    let podmanTimer = null;
+    const PODMAN_INTERVAL = 60000; // 60s
+
     function formatPct(v) { return (typeof v === 'number') ? v.toFixed(1) + '%' : '—'; }
     function nowShort() { return new Date().toLocaleTimeString(); }
 
@@ -220,6 +224,129 @@
             updateNodeUI(node.id, res);
         }
     }
+
+    // --- Podman containers poller ---
+    async function fetchPodmanContainers() {
+        try {
+            const res = await fetch('/api/podman/containers', { cache: 'no-store' });
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            const j = await res.json();
+            return { ok: true, data: j };
+        } catch (err) {
+            return { ok: false, error: err.toString() };
+        }
+    }
+
+    function renderPodmanContainers(containers) {
+        const root = document.getElementById('podman-containers');
+        const updated = document.getElementById('podman-updated');
+        if (!root) return;
+        root.innerHTML = '';
+        if (!Array.isArray(containers)) {
+            const el = document.createElement('div');
+            el.className = 'col-span-1 p-4 rounded-lg bg-gray-50 dark:bg-gray-900';
+            el.textContent = 'Unexpected response format';
+            root.appendChild(el);
+            if (updated) updated.textContent = nowShort();
+            return;
+        }
+
+        containers.forEach(c => {
+            // Normalize name and uptime/status fields
+            const displayName = (Array.isArray(c.Names) && c.Names.length) ? c.Names[0] : (c.Name || c.Names || c.Id || 'container');
+            const isRunning = c.State === 'running' || (c.Status && c.Status.toLowerCase().includes('up')) || (c.Online === true) || (c.ExitCode === 0 && !c.Exited);
+            const statusText = isRunning ? (c.Status || 'Online') : (c.Status || 'Offline');
+            const startedAt = c.StartedAt || c.Started || c.CreatedAt || null;
+
+            // Card structure closely matching Proxmox node cards
+            const card = document.createElement('div');
+            card.className = 'rounded-lg p-4 bg-gray-50 dark:bg-gray-900';
+
+            // Top row: title and status
+            const top = document.createElement('div');
+            top.className = 'flex items-start justify-between';
+            const left = document.createElement('div');
+            const title = document.createElement('div');
+            title.className = 'text-sm font-semibold';
+            title.textContent = displayName;
+            const subtitle = document.createElement('div');
+            subtitle.className = 'text-xs text-gray-500 dark:text-gray-400';
+            subtitle.textContent = '';
+            left.appendChild(title);
+            left.appendChild(subtitle);
+
+            const status = document.createElement('div');
+            status.className = isRunning ? 'text-green-500 text-sm font-medium' : 'text-red-500 text-sm font-medium';
+            status.textContent = statusText;
+
+            top.appendChild(left);
+            top.appendChild(status);
+            card.appendChild(top);
+
+            // Divider like Proxmox small separator
+            const divider = document.createElement('div');
+            divider.className = 'w-full h-px bg-gray-200 dark:bg-gray-800 my-3';
+            card.appendChild(divider);
+
+            // Bottom row: uptime and small updated timestamp
+            const bottom = document.createElement('div');
+            bottom.className = 'flex items-center justify-between text-xs text-gray-600 dark:text-gray-400';
+
+            // Uptime: extract raw 'Up X' part if available
+            let uptimeText = '—';
+            if (c.Status && typeof c.Status === 'string') {
+                const m = c.Status.match(/Up\s+[^()]*/i);
+                uptimeText = m ? m[0].trim() : c.Status;
+            } else if (startedAt) {
+                uptimeText = startedAt;
+            }
+            const uptime = document.createElement('div');
+            uptime.textContent = `Uptime: ${uptimeText}`;
+
+            const updatedSmall = document.createElement('div');
+            updatedSmall.className = 'text-xs text-gray-500 dark:text-gray-400';
+            updatedSmall.textContent = nowShort();
+
+            bottom.appendChild(uptime);
+            bottom.appendChild(updatedSmall);
+            card.appendChild(bottom);
+            root.appendChild(card);
+        });
+
+        if (updated) updated.textContent = nowShort();
+    }
+
+    async function pollPodmanOnce() {
+        const res = await fetchPodmanContainers();
+        if (!res.ok) {
+            // render error card
+            renderPodmanContainers([]);
+            const root = document.getElementById('podman-containers');
+            if (root) {
+                root.innerHTML = '';
+                const el = document.createElement('div');
+                el.className = 'col-span-1 p-3 rounded-lg bg-gray-50 dark:bg-gray-900 text-sm text-red-500';
+                el.textContent = 'Error fetching podman containers: ' + res.error;
+                root.appendChild(el);
+            }
+            const updated = document.getElementById('podman-updated');
+            if (updated) updated.textContent = nowShort();
+            return;
+        }
+
+        renderPodmanContainers(res.data);
+    }
+
+    function startPodmanPolling() {
+        if (podmanTimer) return;
+        pollPodmanOnce();
+        podmanTimer = setInterval(pollPodmanOnce, PODMAN_INTERVAL);
+    }
+
+    // Start podman polling on DOM content loaded
+    window.addEventListener('DOMContentLoaded', () => {
+        startPodmanPolling();
+    });
 
     function startPolling() {
         if (pollTimer) return;

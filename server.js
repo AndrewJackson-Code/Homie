@@ -159,6 +159,44 @@ app.get('/api/proxmox/root', async (req, res) => {
   }
 });
 
+// Proxy endpoint for Podman container broadcast
+// Fetches from the local python server using PODBROADCAST_API_KEY from .env
+// and returns the JSON to the client without exposing the key.
+app.get('/api/podman/containers', async (req, res) => {
+  const key = process.env.PODBROADCAST_API_KEY || null;
+  const target = `http://192.168.0.220:9191/?key=${encodeURIComponent(key || '')}`;
+  if (!key) {
+    appendLog({ ts: new Date().toISOString(), route: '/api/podman/containers', error: 'PODBROADCAST_API_KEY not configured' });
+    return res.status(503).json({ error: 'PODBROADCAST_API_KEY not configured' });
+  }
+
+  try {
+    const proxRes = await fetch(target, { cache: 'no-store' });
+    const text = await proxRes.text();
+    // Try to parse JSON, but fall back to raw text if parsing fails
+    let body = null;
+    try { body = JSON.parse(text); } catch (e) { /* ignore parse errors */ }
+
+    appendLog({
+      ts: new Date().toISOString(),
+      url: target,
+      route: '/api/podman/containers',
+      status: proxRes.status,
+      body_snippet: (typeof text === 'string') ? text.slice(0, 2000) : null
+    });
+
+    if (body !== null) {
+      return res.json(body);
+    }
+
+    // If not valid JSON, proxy raw text with same status code
+    return res.status(proxRes.status || 502).send(text);
+  } catch (err) {
+    appendLog({ ts: new Date().toISOString(), url: target, route: '/api/podman/containers', error: err.toString() });
+    return res.status(500).json({ error: err.toString() });
+  }
+});
+
 // Block access to sensitive files and directories (dotfiles, logs, server source)
 app.use((req, res, next) => {
   // Deny access to dotfiles, logs, and server/package sources
