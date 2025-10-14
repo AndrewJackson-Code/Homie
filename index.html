@@ -92,6 +92,11 @@
       --fancy-halo: rgba(217, 119, 6, 0.06);
     }
 
+    .fancy-gold {
+      --fancy-color: rgba(202, 138, 4, 0.95);
+      --fancy-halo: rgba(202, 138, 4, 0.06);
+    }
+
     .fancy-orange {
       --fancy-color: rgba(249, 115, 22, 0.95);
       --fancy-halo: rgba(249, 115, 22, 0.06);
@@ -182,8 +187,10 @@
               <h2 class="text-lg font-semibold">Proxmox</h2>
               <p class="mt-2 text-sm text-gray-600 dark:text-gray-300">Cluster Info</p>
             </div>
-            <div class="h-12 w-12 rounded-lg bg-orange-500 flex items-center justify-center text-white font-bold">
-              P</div>
+            <div class="h-12 w-12 rounded-lg flex items-center justify-center bg-transparent">
+              <img src="/public/proxmox-logo-stacked-color.svg" alt="Proxmox" class="logo-light h-max w-auto block dark:hidden" />
+              <img src="/public/proxmox-logo-stacked-inverted-color.svg" alt="Proxmox" class="logo-dark h-max w-auto hidden dark:block" />
+            </div>
           </div>
 
           <!-- <div class="mt-4 flex items-center gap-2.5">
@@ -199,8 +206,9 @@
                   <div class="text-sm font-semibold">pve-master</div>
                   <div class="text-xs text-gray-500 dark:text-gray-400">Status: <span
                       class="inline-block ml-1 text-xs font-medium" id="status-pve-master">Unknown</span></div>
-                      <p class="mt-2 text-xs text-gray-600 dark:text-gray-300"> <span class="font-bold">Host:</span> EliteDesk 800 G2 (A)</p>
-                    </div>
+                  <p class="mt-2 text-xs text-gray-600 dark:text-gray-300"> <span class="font-bold">Host:</span>
+                    EliteDesk 800 G2 (A)</p>
+                </div>
                 <div class="text-xs text-gray-500 dark:text-gray-400" id="updated-pve-master">—</div>
               </div>
               <div class="mt-3 text-xs">
@@ -228,7 +236,8 @@
                   <div class="text-sm font-semibold">pve-gamehost</div>
                   <div class="text-xs text-gray-500 dark:text-gray-400">Status: <span
                       class="inline-block ml-1 text-xs font-medium" id="status-pve-gamehost">Unknown</span></div>
-                      <p class="mt-2 text-xs text-gray-600 dark:text-gray-300"> <span class="font-bold">Host:</span> Ryzen Rig</p>
+                  <p class="mt-2 text-xs text-gray-600 dark:text-gray-300"> <span class="font-bold">Host:</span> Ryzen
+                    Rig</p>
                 </div>
                 <div class="text-xs text-gray-500 dark:text-gray-400" id="updated-pve-gamehost">—</div>
               </div>
@@ -257,7 +266,8 @@
                   <div class="text-sm font-semibold">pve-mac</div>
                   <div class="text-xs text-gray-500 dark:text-gray-400">Status: <span
                       class="inline-block ml-1 text-xs font-medium" id="status-pve-mac">Unknown</span></div>
-                      <p class="mt-2 text-xs text-gray-600 dark:text-gray-300"><span class="font-bold">Host: </span>Mac Mini (A1347)</p>
+                  <p class="mt-2 text-xs text-gray-600 dark:text-gray-300"><span class="font-bold">Host: </span>Mac Mini
+                    (A1347)</p>
                 </div>
                 <div class="text-xs text-gray-500 dark:text-gray-400" id="updated-pve-mac">—</div>
               </div>
@@ -312,24 +322,43 @@
           </div>
         </article>
 
-        <!-- Panel 3: Mealie -->
+        <!-- Panel 7: Web Game -->
         <article
-          class="rounded-xl p-2.5 bg-white/10 dark:bg-gray-800 shadow-md hover:shadow-lg transition-shadow fancy-border fancy-yellow">
+          class="rounded-xl p-2.5 bg-white/10 dark:bg-gray-800 shadow-md hover:shadow-lg transition-shadow fancy-border fancy-purple">
           <div class="flex items-start justify-between">
             <div>
-              <h2 class="text-lg font-semibold">Mealie</h2>
-              <p class="mt-2 text-sm text-gray-600 dark:text-gray-300">A recipe book web app</p>
+              <h2 class="text-lg font-semibold">Web Game</h2>
+              <p class="mt-2 text-sm text-gray-600 dark:text-gray-300">Why Yes, I am a Robot! (Under Construction)</p>
             </div>
-            <div class="h-12 w-12 rounded-lg bg-yellow-500 flex items-center justify-center text-white font-bold">
-              M</div>
+            <div class="h-12 w-12 rounded-lg bg-purple-500 flex items-center justify-center text-white font-bold">
+              G</div>
           </div>
           <div class="mt-4 flex gap-2.5">
-            <a href="https://aj-mealie.duckdns.org/" id="goToMealie"
-              class="px-3 py-1 bg-yellow-500 text-white rounded">Try
-              Now</a>
+            <a href="#" id="goToGame" class="px-3 py-1 bg-purple-500 text-white rounded">Play now!</a>
           </div>
         </article>
 
+        <!-- Panel 5: Plex Streaming Status -->
+        <article
+          class="rounded-xl p-2.5 bg-white/10 dark:bg-gray-800 shadow-md hover:shadow-lg transition-shadow fancy-border fancy-gold">
+          <div class="flex items-start justify-between">
+            <div>
+              <h2 class="text-lg font-semibold">What's On?</h2>
+              <p class="mt-2 text-sm text-gray-600 dark:text-gray-300">Current Plex Streams</p>
+            </div>
+            <div class="h-12 w-12 rounded-lg bg-yellow-600 flex items-center justify-center text-white font-bold">
+              ▶</div>
+          </div>
+          <div id="tautulli-panel" class="mt-3">
+            <div class="flex items-center justify-between">
+              <div class="text-sm text-gray-600 dark:text-gray-300">What's Streaming</div>
+              <div id="tautulli-updated" class="text-xs text-gray-500 dark:text-gray-400">—</div>
+            </div>
+            <div id="tautulli-content" class="mt-3 grid grid-cols-1 gap-3">
+              <!-- Streaming cards injected by src/app.js -->
+            </div>
+          </div>
+        </article>
 
         <!-- Panel 4: Podman Container Status Panel -->
         <article
@@ -339,7 +368,8 @@
               <h2 class="text-lg font-semibold">Podman Containers</h2>
               <p class="mt-2 text-sm text-gray-600 dark:text-gray-300"> Track Podman Container Status
               </p>
-              <p class="mt-2 text-xs text-gray-600 dark:text-gray-300"> <span class="font-bold">Host:</span> EliteDesk 800 G2 (B)
+              <p class="mt-2 text-xs text-gray-600 dark:text-gray-300"> <span class="font-bold">Host:</span> EliteDesk
+                800 G2 (B)
               </p>
             </div>
             <div class="h-12 w-12 rounded-lg bg-blue-800 flex items-center justify-center text-white font-bold">
@@ -356,25 +386,9 @@
           </div>
         </article>
 
-        <!-- Panel 5: Web Game -->
-        <article
-          class="rounded-xl p-2.5 bg-white/10 dark:bg-gray-800 shadow-md hover:shadow-lg transition-shadow fancy-border fancy-purple">
-          <div class="flex items-start justify-between">
-            <div>
-              <h2 class="text-lg font-semibold">Web Game</h2>
-              <p class="mt-2 text-sm text-gray-600 dark:text-gray-300">Why Yes, I am a Robot! (Under Construction)</p>
-            </div>
-            <div class="h-12 w-12 rounded-lg bg-purple-500 flex items-center justify-center text-white font-bold">
-              G</div>
-          </div>
-          <div class="mt-4 flex gap-2.5">
-            <a href="#" id="goToGame" class="px-3 py-1 bg-purple-500 text-white rounded">Play now!</a>
-          </div>
-        </article>
-
         <!-- Panel 6: AI Server -->
         <article id="ai-server-panel"
-          class="rounded-xl p-2.5 bg-white/10 dark:bg-gray-800 shadow-md hover:shadow-lg transition-shadow fancy-border fancy-black m:col-start-1 row-span-1 sm:col-span-2 md:col-span-3 lg:col-start-1">
+          class="rounded-xl p-2.5 bg-white/10 dark:bg-gray-800 shadow-md hover:shadow-lg transition-shadow fancy-border fancy-black m:col-start-1 row-span-1 md:col-span-2 lg:col-start-1">
           <div class="flex items-start justify-between">
             <div>
               <h2 class="text-lg font-semibold">AI Server</h2>
@@ -394,7 +408,8 @@
 
           <!-- Mini Chat Box -->
           <div class="mt-4">
-            <div id="mini-chat" class="w-full min-h-24 max-h-56 h-auto bg-gray-50 shadow dark:bg-gray-900 rounded-lg p-2.5 flex flex-col">
+            <div id="mini-chat"
+              class="w-full min-h-24 max-h-56 h-auto bg-gray-50 shadow dark:bg-gray-900 rounded-lg p-2.5 flex flex-col">
               <div id="mini-chat-messages" class="flex-1 overflow-y-auto text-sm space-y-2 pb-2"></div>
               <form id="mini-chat-form" class="mt-2 flex gap-2">
                 <input id="mini-chat-input" type="text" placeholder="Say something..."
@@ -403,6 +418,24 @@
                   class="px-3 py-2 bg-black text-white dark:bg-white dark:text-black rounded text-sm">Send</button>
               </form>
             </div>
+          </div>
+        </article>
+
+        <!-- Panel 3: Mealie -->
+        <article
+          class="rounded-xl p-2.5 bg-white/10 dark:bg-gray-800 shadow-md hover:shadow-lg transition-shadow fancy-border fancy-yellow">
+          <div class="flex items-start justify-between">
+            <div>
+              <h2 class="text-lg font-semibold">Mealie</h2>
+              <p class="mt-2 text-sm text-gray-600 dark:text-gray-300">A recipe book web app</p>
+            </div>
+            <div class="h-12 w-12 rounded-lg bg-yellow-500 flex items-center justify-center text-white font-bold">
+              M</div>
+          </div>
+          <div class="mt-4 flex gap-2.5">
+            <a href="https://aj-mealie.duckdns.org/" id="goToMealie"
+              class="px-3 py-1 bg-yellow-500 text-white rounded">Try
+              Now</a>
           </div>
         </article>
 

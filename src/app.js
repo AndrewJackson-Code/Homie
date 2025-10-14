@@ -400,6 +400,136 @@
         statusEl.title = statusText || '';
     }
 
+    // --- Tautulli "What's Streaming" integration ---
+    const TAUTULLI_POLL_INTERVAL = 15000; // 15s
+    let tautulliTimer = null;
+
+    async function fetchTautulliNowPlaying() {
+        try {
+            const res = await fetch('/api/tautulli/now_playing', { cache: 'no-store' });
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            const j = await res.json();
+            return { ok: true, data: j };
+        } catch (err) {
+            return { ok: false, error: err.toString() };
+        }
+    }
+
+    function renderTautulli(data) {
+        const root = document.getElementById('tautulli-content');
+        const updated = document.getElementById('tautulli-updated');
+        if (!root) return;
+        root.innerHTML = '';
+
+        // Data shape: Tautulli v2 responses usually have 'response' with 'data' array under 'sessions' or similar.
+        let sessions = [];
+        try {
+            if (!data) data = {};
+            // Try common shapes
+            if (Array.isArray(data.sessions)) sessions = data.sessions;
+            else if (data.response && Array.isArray(data.response.data)) sessions = data.response.data;
+            else if (data.response && data.response.data && Array.isArray(data.response.data.sessions)) sessions = data.response.data.sessions;
+            else if (data.data && Array.isArray(data.data.sessions)) sessions = data.data.sessions;
+        } catch (e) { sessions = []; }
+
+        if (!sessions || sessions.length === 0) {
+            const el = document.createElement('div');
+            el.className = 'col-span-1 p-4 rounded-lg bg-gray-50 dark:bg-gray-900 text-sm text-gray-600 dark:text-gray-300';
+            el.textContent = 'No active streams right now.';
+            root.appendChild(el);
+            if (updated) updated.textContent = 'Last updated: ' + nowShort();
+            return;
+        }
+
+        sessions.forEach(s => {
+            const card = document.createElement('div');
+            card.className = 'rounded-lg p-4 bg-gray-50 dark:bg-gray-900';
+
+            const top = document.createElement('div');
+            top.className = 'flex items-start justify-between';
+            const left = document.createElement('div');
+
+            const title = document.createElement('div');
+            title.className = 'text-sm font-semibold';
+            // Try several fields for a friendly title
+            title.textContent = s.title || s.grandparent_title || s.full_title || (s.movie_title || s.show_title) || 'Stream';
+
+            const meta = document.createElement('div');
+            meta.className = 'mt-1 text-xs text-gray-600 dark:text-gray-400';
+            const who = document.createElement('span');
+            who.className = 'font-medium';
+            who.textContent = s.username || s.friendly_name || s.user || s.account || 'Unknown User';
+            const separator = document.createElement('span');
+            separator.className = 'mx-1';
+            separator.textContent = '•';
+            const device = document.createElement('span');
+            device.textContent = s.player || s.device || s.platform || '';
+
+            meta.appendChild(who);
+            meta.appendChild(separator);
+            meta.appendChild(device);
+
+            left.appendChild(title);
+            left.appendChild(meta);
+
+            top.appendChild(left);
+
+            const right = document.createElement('div');
+            right.className = 'text-xs text-gray-500 dark:text-gray-400';
+            right.textContent = nowShort();
+            top.appendChild(right);
+
+            card.appendChild(top);
+
+            // progress / status row
+            const progRow = document.createElement('div');
+            progRow.className = 'mt-3 text-xs';
+            const progressText = document.createElement('div');
+            const progress = s.progress !== undefined ? `${s.progress}%` : (s.view_offset && s.duration ? `${Math.round((s.view_offset / s.duration) * 100)}%` : '—');
+            progressText.textContent = `Progress: ${progress}`;
+            progRow.appendChild(progressText);
+            card.appendChild(progRow);
+
+            root.appendChild(card);
+        });
+
+        if (updated) updated.textContent = 'Last updated: ' + nowShort();
+    }
+
+    async function pollTautulliOnce() {
+        const res = await fetchTautulliNowPlaying();
+        if (!res.ok) {
+            const root = document.getElementById('tautulli-content');
+            if (root) {
+                root.innerHTML = '';
+                const el = document.createElement('div');
+                el.className = 'col-span-1 p-3 rounded-lg bg-gray-50 dark:bg-gray-900 text-sm text-red-500';
+                el.textContent = 'Error fetching streaming info: ' + res.error;
+                root.appendChild(el);
+            }
+            const updated = document.getElementById('tautulli-updated');
+            if (updated) updated.textContent = nowShort();
+            return;
+        }
+
+        // Render with various tolerant shapes
+        // If the API returned a wrapper like { response: { data: ... } }, pass that data through
+        let payload = res.data;
+        if (payload && payload.response && payload.response.data) payload = payload.response.data;
+        renderTautulli(payload);
+    }
+
+    function startTautulliPolling() {
+        if (tautulliTimer) return;
+        pollTautulliOnce();
+        tautulliTimer = setInterval(pollTautulliOnce, TAUTULLI_POLL_INTERVAL);
+    }
+
+    // Start Tautulli polling when DOM ready
+    window.addEventListener('DOMContentLoaded', () => {
+        startTautulliPolling();
+    });
+
     async function pollVmOnline(vmid, intervalMs) {
         if (!vmid) return;
         const url = '/api/proxmox/vm/' + encodeURIComponent(vmid) + '/online';

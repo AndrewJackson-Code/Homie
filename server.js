@@ -199,6 +199,46 @@ app.get('/api/podman/containers', async (req, res) => {
   }
 });
 
+// Proxy endpoint for Tautulli "now playing" (What's streaming)
+// Keeps TAUTULLI_API_KEY on the server and avoids exposing it to the client.
+app.get('/api/tautulli/now_playing', async (req, res) => {
+  const key = process.env.TAUTULLI_API_KEY || null;
+  const host = process.env.TAUTULLI_HOST || '192.168.0.234:8181';
+  if (!key) {
+    appendLog({ ts: new Date().toISOString(), route: '/api/tautulli/now_playing', error: 'TAUTULLI_API_KEY not configured' });
+    return res.status(503).json({ error: 'TAUTULLI_API_KEY not configured' });
+  }
+
+  // Use Tautulli v2 API endpoint. We intentionally call get_activity which returns current sessions.
+  const target = `http://${host}/api/v2?apikey=${encodeURIComponent(key)}&cmd=get_activity`;
+
+  try {
+    const proxRes = await fetch(target, { cache: 'no-store' });
+    const text = await proxRes.text();
+    let body = null;
+    try { body = JSON.parse(text); } catch (e) { /* fall back to raw text */ }
+
+    // Scrub API key before writing logs
+    const scrubbedTarget = String(target).replace(/([?&]apikey=)[^&]*/i, '$1[REDACTED]');
+    appendLog({
+      ts: new Date().toISOString(),
+      url: scrubbedTarget,
+      route: '/api/tautulli/now_playing',
+      status: proxRes.status,
+      body_snippet: (typeof text === 'string') ? text.slice(0, 2000) : null
+    });
+
+    if (body !== null) {
+      return res.json(body);
+    }
+
+    return res.status(proxRes.status || 502).send(text);
+  } catch (err) {
+    appendLog({ ts: new Date().toISOString(), url: target, route: '/api/tautulli/now_playing', error: err.toString() });
+    return res.status(500).json({ error: err.toString() });
+  }
+});
+
 // Block access to sensitive files and directories (dotfiles, logs, server source)
 app.use((req, res, next) => {
   // Deny access to dotfiles, logs, and server/package sources
