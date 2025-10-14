@@ -113,10 +113,23 @@
     }
 
     /* Markdown code block styling inside mini chat */
-    #mini-chat .inline-block pre { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, 'Roboto Mono', 'Ubuntu Mono', monospace; }
-    #mini-chat .inline-block code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, 'Roboto Mono', 'Ubuntu Mono', monospace; }
-    #mini-chat .inline-block pre { background: rgba(0,0,0,0.03); padding: 0.5rem; border-radius: 6px; }
-    .dark #mini-chat .inline-block pre { background: rgba(255,255,255,0.03); }
+    #mini-chat .inline-block pre {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, 'Roboto Mono', 'Ubuntu Mono', monospace;
+    }
+
+    #mini-chat .inline-block code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, 'Roboto Mono', 'Ubuntu Mono', monospace;
+    }
+
+    #mini-chat .inline-block pre {
+      background: rgba(0, 0, 0, 0.03);
+      padding: 0.5rem;
+      border-radius: 6px;
+    }
+
+    .dark #mini-chat .inline-block pre {
+      background: rgba(255, 255, 255, 0.03);
+    }
   </style>
 </head>
 
@@ -131,7 +144,8 @@
           <button id="themeToggleSwitch" role="switch" aria-checked="false" aria-labelledby="themeToggleLabel"
             class="relative inline-flex items-center h-8 w-14 rounded-full transition-colors focus:outline-none bg-gray-200 dark:bg-gray-700 px-1">
             <!-- Sun icon (left) -->
-            <svg id="icon-sun" class="h-5 w-5 text-yellow-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <svg id="icon-sun" class="h-5 w-5 text-yellow-400" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="12" cy="12" r="3"></circle>
               <path d="M12 2v1"></path>
               <path d="M12 21v1"></path>
@@ -143,9 +157,11 @@
               <path d="M18.36 5.64l.7-.7"></path>
             </svg>
             <!-- Toggle knob -->
-            <span id="themeToggleKnob" class="absolute inline-block h-6 w-6 bg-white rounded-full shadow transform transition-transform translate-x-0"></span>
+            <span id="themeToggleKnob"
+              class="absolute inline-block h-6 w-6 bg-white rounded-full shadow transform transition-transform translate-x-0"></span>
             <!-- Moon icon (right) -->
-            <svg id="icon-moon" class="h-5 w-5 text-gray-500 ml-auto" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <svg id="icon-moon" class="h-5 w-5 text-gray-500 ml-auto" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
               <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
             </svg>
           </button>
@@ -320,6 +336,8 @@
               <h2 class="text-lg font-semibold">Podman Containers</h2>
               <p class="mt-2 text-sm text-gray-600 dark:text-gray-300"> Track Podman Container Status.
               </p>
+              <p class="mt-2 text-xs text-gray-600 dark:text-gray-300"> <span class="font-bold">Host:</span> EliteDesk 800 G2 | 16GB RAM | i5-6500T
+              </p>
             </div>
             <div class="h-12 w-12 rounded-lg bg-blue-800 flex items-center justify-center text-white font-bold">
               PM</div>
@@ -368,7 +386,8 @@
               class="px-3 py-1 bg-black text-white dark:bg-white dark:text-black rounded">Start
               Talking</a>
           </div>
-          <div class="mt-4"><span class="mt-2 text-xs text-gray-600 dark:text-gray-300"> Or, try a small chat here...</span></div>
+          <div class="mt-4"><span class="mt-2 text-xs text-gray-600 dark:text-gray-300"> Or, try a small chat
+              here...</span></div>
 
           <div class="mt-4">
             <div id="mini-chat" class="w-full h-56 bg-gray-50 dark:bg-gray-900 rounded-lg p-2.5 flex flex-col">
