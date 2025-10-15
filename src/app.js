@@ -476,7 +476,7 @@
 
             const right = document.createElement('div');
             right.className = 'text-xs text-gray-500 dark:text-gray-400';
-            right.textContent = nowShort();
+            //right.textContent = nowShort();
             top.appendChild(right);
 
             card.appendChild(top);
