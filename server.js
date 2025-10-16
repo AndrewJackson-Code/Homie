@@ -33,11 +33,15 @@ function appendLog(obj) {
 }
 
 const PORT = process.env.PORT || 3000;
-const PROXMOX_HOST = process.env.PROXMOX_HOST || 'aj-proxmox.duckdns.org';
+const PROXMOX_HOST = process.env.PROXMOX_HOST || null;
 const PROXMOX_TOKEN = process.env.PROXMOX_API_TOKEN || null;
 
 if (!PROXMOX_TOKEN) {
   console.warn('Warning: PROXMOX_API_TOKEN not set in .env. Requests to Proxmox may fail.');
+}
+
+if (!PROXMOX_HOST) {
+  console.warn('Warning: PROXMOX_HOST not set in .env. Requests to Proxmox may fail.');
 }
 
 const PROXMOX_BASE = `https://${PROXMOX_HOST}:8006`;

@@ -456,18 +456,63 @@
 
             const meta = document.createElement('div');
             meta.className = 'mt-1 text-xs text-gray-600 dark:text-gray-400';
-            const who = document.createElement('span');
-            who.className = 'font-medium';
-            who.textContent = s.username || s.friendly_name || s.user || s.account || 'Unknown User';
+
+            // Show video and player details instead of account/device
+            const videoInfo = document.createElement('span');
+            videoInfo.className = 'font-medium';
+            videoInfo.textContent = s.full_title || s.title || s.grandparent_title || (s.movie_title || s.show_title) || 'Unknown Video';
+
             const separator = document.createElement('span');
             separator.className = 'mx-1';
             separator.textContent = '•';
-            const device = document.createElement('span');
-            device.textContent = s.player || s.device || s.platform || '';
 
-            meta.appendChild(who);
-            meta.appendChild(separator);
-            meta.appendChild(device);
+            const playerInfo = document.createElement('span');
+            // Basic player/device name
+            const playerName = s.player || s.device || s.platform || 'Unknown Player';
+
+            // Determine stream status: direct play / direct stream / transcoding
+            // Tautulli and proxy fields vary; check a few common ones.
+            let status = null;
+            // Some Tautulli responses include 'stream_type' with values like 'direct_play', 'direct_stream', 'transcode'
+            if (s.stream_type) {
+                const st = String(s.stream_type).toLowerCase();
+                if (st.includes('direct') && st.includes('play')) status = 'Direct Play';
+                else if (st.includes('direct') && st.includes('stream')) status = 'Direct Stream';
+                else if (st.includes('trans')) status = 'Transcoding';
+            }
+            // Fallbacks used by some setups
+            if (!status && (s.transcode_decision || s.container_decision)) {
+                const dec = String(s.transcode_decision || s.container_decision).toLowerCase();
+                if (dec.includes('transcode') || dec.includes('transcoding')) status = 'Transcoding';
+                else if (dec.includes('direct')) status = 'Direct Play';
+            }
+            // Some payloads include a boolean like is_transcoding
+            if (!status && (s.is_transcoding === true || s.isTranscoding === true)) status = 'Transcoding';
+            // If view_offset/duration and bitrate fields exist, we still prefer explicit flags
+            if (!status && s.transcode && (s.transcode.active || s.transcode.type)) {
+                const t = String((s.transcode.active && 'transcoding') || s.transcode.type).toLowerCase();
+                if (t.includes('trans')) status = 'Transcoding';
+            }
+            if (!status) status = 'Unknown';
+
+            playerInfo.textContent = `${playerName} (${status})`;
+
+            //meta.appendChild(videoInfo);
+            meta.appendChild(playerInfo);
+            //meta.appendChild(separator);
+
+            // Previous account/device info commented out for easy restoration
+            // const who = document.createElement('span');
+            // who.className = 'font-medium';
+            // who.textContent = s.username || s.friendly_name || s.user || s.account || 'Unknown User';
+            // const separator = document.createElement('span');
+            // separator.className = 'mx-1';
+            // separator.textContent = '•';
+            // const device = document.createElement('span');
+            // device.textContent = s.player || s.device || s.platform || '';
+            // meta.appendChild(who);
+            // meta.appendChild(separator);
+            // meta.appendChild(device);
 
             left.appendChild(title);
             left.appendChild(meta);
