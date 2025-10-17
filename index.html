@@ -112,7 +112,14 @@
       --fancy-halo: rgba(6, 182, 212, 0.06);
     }
 
+    /* fancy-black: default to black in light mode, switch to white when .dark is present */
     .fancy-black {
+      --fancy-color: rgba(0, 0, 0, 0.8);
+      --fancy-halo: rgba(0, 0, 0, 0.045);
+    }
+
+    /* In dark mode we want the inverted (white) ring */
+    .dark .fancy-black {
       --fancy-color: rgba(255, 255, 255, 0.8);
       --fancy-halo: rgba(255, 255, 255, 0.045);
     }
