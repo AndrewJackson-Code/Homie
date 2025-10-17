@@ -451,8 +451,31 @@
 
             const title = document.createElement('div');
             title.className = 'text-sm font-semibold';
-            // Try several fields for a friendly title
-            title.textContent = s.title || s.grandparent_title || s.full_title || (s.movie_title || s.show_title) || 'Stream';
+            // Build a friendly title prefixed with show name for episodes when available.
+            const showName = s.grandparent_title || s.show_title || s.series_title || null;
+            const episodeTitle = s.title || s.episode_title || null;
+            const fullTitle = s.full_title || null;
+            let displayTitle = 'Stream';
+            if (fullTitle) {
+                displayTitle = fullTitle;
+            } else if (showName && episodeTitle) {
+                try {
+                    const showLower = String(showName).toLowerCase();
+                    const epLower = String(episodeTitle).toLowerCase();
+                    // avoid duplication if episode title already contains show name
+                    if (epLower.includes(showLower)) displayTitle = episodeTitle;
+                    else displayTitle = `${showName} — ${episodeTitle}`;
+                } catch (e) {
+                    displayTitle = `${showName} — ${episodeTitle}`;
+                }
+            } else if (episodeTitle) {
+                displayTitle = episodeTitle;
+            } else if (showName) {
+                displayTitle = showName;
+            } else {
+                displayTitle = s.movie_title || s.show_title || 'Stream';
+            }
+            title.textContent = displayTitle;
 
             const meta = document.createElement('div');
             meta.className = 'mt-1 text-xs text-gray-600 dark:text-gray-400';
@@ -460,7 +483,8 @@
             // Show video and player details instead of account/device
             const videoInfo = document.createElement('span');
             videoInfo.className = 'font-medium';
-            videoInfo.textContent = s.full_title || s.title || s.grandparent_title || (s.movie_title || s.show_title) || 'Unknown Video';
+            // Use the same displayTitle logic for the compact video info to keep things consistent
+            videoInfo.textContent = fullTitle || (showName && episodeTitle ? (displayTitle) : (episodeTitle || showName || s.movie_title || s.show_title || 'Unknown Video'));
 
             const separator = document.createElement('span');
             separator.className = 'mx-1';
