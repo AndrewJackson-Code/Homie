@@ -117,6 +117,11 @@
       --fancy-halo: rgba(255, 255, 255, 0.045);
     }
 
+    .fancy-green {
+      --fancy-color: rgba(16, 185, 129, 0.95);
+      --fancy-halo: rgba(16, 185, 129, 0.06);
+    }
+
     /* Markdown code block styling inside mini chat */
     #mini-chat .inline-block pre {
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, 'Roboto Mono', 'Ubuntu Mono', monospace;
@@ -307,18 +312,18 @@
 
         <!-- Panel 2: Blog -->
         <article
-          class="rounded-xl p-2.5 bg-white/10 dark:bg-gray-800 shadow-md hover:shadow-lg transition-shadow fancy-border fancy-blue">
+          class="rounded-xl p-2.5 fancy-green bg-white/10 dark:bg-gray-800 shadow-md hover:shadow-lg transition-shadow fancy-border">
           <div class="flex items-start justify-between">
             <div>
               <h2 class="text-lg font-semibold">Blog</h2>
               <p class="mt-2 text-sm text-gray-600 dark:text-gray-300">A personal blog (Under Construction)
               </p>
             </div>
-            <div class="h-12 w-12 rounded-lg bg-blue-500 flex items-center justify-center text-white font-bold">
+            <div class="h-12 w-12 rounded-lg bg-green-700 flex items-center justify-center text-white font-bold">
               B</div>
           </div>
           <div class="mt-4 flex gap-2.5">
-            <a href="#" class="px-3 py-1 bg-blue-500 text-white rounded">Take a Read</a>
+            <a href="#" class="px-3 py-1 bg-green-700 text-white rounded">Take a Read</a>
           </div>
         </article>
 
