@@ -5,6 +5,10 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>AJ Dashboard</title>
+  <!-- Favicon placeholder — switched dynamically based on theme -->
+  <link id="favicon-ico" rel="icon" href="/public/favicon-light/favicon.ico" />
+  <link id="favicon-32" rel="icon" type="image/png" sizes="32x32" href="/public/favicon-light/favicon-32x32.png" />
+  <link id="favicon-16" rel="icon" type="image/png" sizes="16x16" href="/public/favicon-light/favicon-16x16.png" />
   <!-- Tailwind CDN (Play CDN for quick prototyping) -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -32,6 +36,48 @@
 
     setInterval(updateTime, 1000);
     updateTime();
+  </script>
+  <script>
+    // Dynamically switch favicons based on presence of .dark on <html>
+    (function () {
+      const root = document.documentElement;
+      const assets = {
+        light: {
+          ico: '/public/favicon-light/favicon.ico',
+          '32': '/public/favicon-light/favicon-32x32.png',
+          '16': '/public/favicon-light/favicon-16x16.png'
+        },
+        dark: {
+          ico: '/public/favicon-dark/favicon.ico',
+          '32': '/public/favicon-dark/favicon-32x32.png',
+          '16': '/public/favicon-dark/favicon-16x16.png'
+        }
+      };
+
+      function setFavicons(mode) {
+        const pref = mode === 'dark' ? assets.dark : assets.light;
+        const ico = document.getElementById('favicon-ico');
+        const f32 = document.getElementById('favicon-32');
+        const f16 = document.getElementById('favicon-16');
+        if (ico) ico.href = pref.ico;
+        if (f32) f32.href = pref['32'];
+        if (f16) f16.href = pref['16'];
+      }
+
+      // Initial set
+      setFavicons(root.classList.contains('dark') ? 'dark' : 'light');
+
+      // Observe <html> class changes so we can update when theme toggles
+      const mo = new MutationObserver((mutations) => {
+        for (const m of mutations) {
+          if (m.attributeName === 'class') {
+            setFavicons(root.classList.contains('dark') ? 'dark' : 'light');
+            break;
+          }
+        }
+      });
+      mo.observe(root, { attributes: true, attributeFilter: ['class'] });
+    })();
   </script>
   <style>
     /* Hide the small per-panel 'updated' timestamps entirely */
