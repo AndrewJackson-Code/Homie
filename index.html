@@ -9,6 +9,9 @@
   <link id="favicon-ico" rel="icon" href="/public/favicon-light/favicon.ico" />
   <link id="favicon-32" rel="icon" type="image/png" sizes="32x32" href="/public/favicon-light/favicon-32x32.png" />
   <link id="favicon-16" rel="icon" type="image/png" sizes="16x16" href="/public/favicon-light/favicon-16x16.png" />
+  <link id="android-192" rel="icon" type="image/png" sizes="192x192" href="/public/favicon-light/android-chrome-192x192.png" />
+  <link id="android-512" rel="icon" type="image/png" sizes="512x512" href="/public/favicon-light/android-chrome-512x512.png" />
+  <link id="apple-touch" rel="apple-touch-icon" href="/public/favicon-light/apple-touch-icon.png" />
   <!-- Tailwind CDN (Play CDN for quick prototyping) -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -45,12 +48,18 @@
         light: {
           ico: '/public/favicon-light/favicon.ico',
           '32': '/public/favicon-light/favicon-32x32.png',
-          '16': '/public/favicon-light/favicon-16x16.png'
+          '16': '/public/favicon-light/favicon-16x16.png',
+          '192': '/public/favicon-light/android-chrome-192x192.png',
+          '512': '/public/favicon-light/android-chrome-512x512.png',
+          'apple': '/public/favicon-light/apple-touch-icon.png'
         },
         dark: {
           ico: '/public/favicon-dark/favicon.ico',
           '32': '/public/favicon-dark/favicon-32x32.png',
-          '16': '/public/favicon-dark/favicon-16x16.png'
+          '16': '/public/favicon-dark/favicon-16x16.png',
+          '192': '/public/favicon-dark/android-chrome-192x192.png',
+          '512': '/public/favicon-dark/android-chrome-512x512.png',
+          'apple': '/public/favicon-dark/apple-touch-icon.png'
         }
       };
 
@@ -59,9 +68,15 @@
         const ico = document.getElementById('favicon-ico');
         const f32 = document.getElementById('favicon-32');
         const f16 = document.getElementById('favicon-16');
+        const a192 = document.getElementById('android-192');
+        const a512 = document.getElementById('android-512');
+        const apple = document.getElementById('apple-touch');
         if (ico) ico.href = pref.ico;
         if (f32) f32.href = pref['32'];
         if (f16) f16.href = pref['16'];
+        if (a192) a192.href = pref['192'];
+        if (a512) a512.href = pref['512'];
+        if (apple) apple.href = pref['apple'];
       }
 
       // Initial set
