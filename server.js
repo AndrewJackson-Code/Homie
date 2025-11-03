@@ -95,7 +95,7 @@ app.get('/api/proxmox/nodes/:node/status', async (req, res) => {
   }
 });
 
-// Simple VM online check: /api/proxmox/vm/:vmid/online?node=NODE
+// Simple VM online check
 app.get('/api/proxmox/vm/:vmid/online', async (req, res) => {
   const vmid = req.params.vmid;
   const node = req.query.node || 'pve-gamehost';
@@ -165,7 +165,6 @@ app.get('/api/proxmox/root', async (req, res) => {
 
 // Proxy endpoint for Podman container broadcast
 // Fetches from the local python server using PODBROADCAST_API_KEY from .env
-// and returns the JSON to the client without exposing the key.
 app.get('/api/podman/containers', async (req, res) => {
   const key = process.env.PODBROADCAST_API_KEY || null;
   const target = `http://192.168.0.220:9191/?key=${encodeURIComponent(key || '')}`;

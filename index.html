@@ -39,18 +39,12 @@
       display: none !important;
     }
 
-    /* Elegant coloured rounded border used for special panels (like the Blog).
-       Uses CSS variables so each panel can override colour/halo independently. */
     .fancy-border {
       position: relative;
       overflow: visible;
       z-index: 0;
-      /* ensure the element (and its shadow) renders above the ring */
-      /* card shadow (keeps the card visually above the ring) */
       box-shadow: 0 14px 30px rgba(2, 6, 23, 0.06), 0 6px 12px rgba(2, 6, 23, 0.04);
-      /* defaults (can be overridden per-panel) */
       --fancy-color: rgba(59, 130, 246, 0.95);
-      /* blue-500 */
       --fancy-halo: rgba(59, 130, 246, 0.06);
       --fancy-border-radius: 8px;
       --fancy-border-inset: 0px;
@@ -66,7 +60,6 @@
       border: var(--fancy-border-width) solid var(--fancy-color);
       background: transparent;
       z-index: -1;
-      /* place behind the card so the card's shadow falls onto it */
     }
 
     /* soft halo behind the ring (uses --fancy-halo) */
@@ -112,13 +105,11 @@
       --fancy-halo: rgba(6, 182, 212, 0.06);
     }
 
-    /* fancy-black: default to black in light mode, switch to white when .dark is present */
     .fancy-black {
       --fancy-color: rgba(0, 0, 0, 0.8);
       --fancy-halo: rgba(0, 0, 0, 0.045);
     }
 
-    /* In dark mode we want the inverted (white) ring */
     .dark .fancy-black {
       --fancy-color: rgba(255, 255, 255, 0.8);
       --fancy-halo: rgba(255, 255, 255, 0.045);
@@ -129,7 +120,6 @@
       --fancy-halo: rgba(16, 185, 129, 0.06);
     }
 
-    /* Markdown code block styling inside mini chat */
     #mini-chat .inline-block pre {
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, 'Roboto Mono', 'Ubuntu Mono', monospace;
     }
@@ -191,7 +181,6 @@
       <section class="grid gap-2.5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
 
         <!-- Panel 1: Proxmox -->
-        <!-- Make this panel two rows tall and positioned at the right-most column on sm/lg -->
         <article
           class="rounded-xl p-2.5 bg-white/10 dark:bg-gray-800 shadow-md hover:shadow-lg transition-shadow fancy-border fancy-orange sm:col-start-1 sm:row-span-2 lg:col-start-1 lg:row-span-2">
           <div class="flex items-start justify-between">
@@ -211,7 +200,7 @@
             </div> -->
 
           <div id="nodesContainer" class="mt-4 grid grid-cols-1 gap-4">
-            <!-- Node cards will be injected here by src/app.js -->
+            <!-- Node cards injected here by src/app.js -->
             <div id="node-pve-master" class="rounded-lg p-4 bg-gray-50 dark:bg-gray-900">
               <div class="flex items-center justify-between">
                 <div>
