@@ -623,6 +623,11 @@
     // --- Miniature chat box handling (contacts remote AI) ---
     function safe$(id) { return document.getElementById(id); }
 
+    // Conversation history - initialized with system prompt on page load
+    const conversationHistory = [
+        { role: 'system', content: 'You are a mini-chat assistant. Never use markdown, only ever use plain text. If the user asks for code, or a question which requires depth to answer, refuse to answer and kindly and warmly direct them to click the "Start Talking" button above to get in depth responses.' }
+    ];
+
     function appendMiniMessage(who, text, opts) {
         // opts: { markdown: boolean }
         const container = safe$('mini-chat-messages');
@@ -663,6 +668,9 @@
         const MODEL = window.AI_MODEL || 'gpt-4o-mini';
         const API_KEY = window.AI_KEY || null;
 
+        // Add user message to conversation history
+        conversationHistory.push({ role: 'user', content: userText });
+
         const controller = new AbortController();
         const timeoutMs = 30000; // 30s for network + model generation
         const timer = setTimeout(() => controller.abort(), timeoutMs);
@@ -672,10 +680,7 @@
 
             const body = JSON.stringify({
                 model: MODEL,
-                messages: [
-                    { role: 'system', content: 'You are a mini-chat assistant. Never use markdown, only ever use plain text. If the user asks for code, or a question which requires depth to answer, refuse to answer and kindly and warmly direct them to click the "Start Talking" button above to get in depth responses.' },
-                    { role: 'user', content: userText }
-                ],
+                messages: conversationHistory,
                 max_tokens: 512,
                 temperature: 0.2
             });
@@ -695,16 +700,28 @@
                 // Try OpenAI-style response: choices[0].message.content
                 const choice = Array.isArray(j.choices) && j.choices[0];
                 const msg = choice?.message?.content ?? choice?.text ?? null;
-                if (msg) return { ok: true, reply: msg };
+                if (msg) {
+                    // Add assistant response to conversation history
+                    conversationHistory.push({ role: 'assistant', content: msg });
+                    return { ok: true, reply: msg };
+                }
                 // Fallbacks
-                if (j.reply) return { ok: true, reply: j.reply };
-                return { ok: true, reply: JSON.stringify(j) };
+                if (j.reply) {
+                    conversationHistory.push({ role: 'assistant', content: j.reply });
+                    return { ok: true, reply: j.reply };
+                }
+                const fallbackMsg = JSON.stringify(j);
+                conversationHistory.push({ role: 'assistant', content: fallbackMsg });
+                return { ok: true, reply: fallbackMsg };
             } else {
                 const txt = await res.text();
+                conversationHistory.push({ role: 'assistant', content: txt });
                 return { ok: true, reply: txt };
             }
         } catch (err) {
             clearTimeout(timer);
+            // Remove the user message from history on error
+            conversationHistory.pop();
             return { ok: false, error: (err.name === 'AbortError') ? 'Request timed out' : err.toString() };
         }
     }
