@@ -11,3 +11,6 @@ A Personal Dashboard and Home Page
 ## Environment variables
 
 - LOGGING: When set to `0` or `false` the server will not write Proxmox request/response logs to `logs/proxmox.jsonl`. By default logging is enabled.
+
+### Note
+This is a personal project not intended for use within any other network, but could be adapted. Check server.js for hard coded local IPs if you want to use it.
